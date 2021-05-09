@@ -22,10 +22,10 @@ namespace Climate
 #define DHTTYPE DHT22
 #define HEATER_RELAY_PIN 4
 
-#define DHT_HOT_SIDE_PIN 18    // #1
-#define DHT_HOT_CENTER_PIN 5   // #2
-#define DHT_COLD_CENTER_PIN 17 // #3
-#define DHT_COLD_SIDE_PIN 16   // #4
+#define DHT_HOT_SIDE_PIN 16    // #1
+#define DHT_HOT_CENTER_PIN 17   // #2
+#define DHT_COLD_CENTER_PIN 5 // #3
+#define DHT_COLD_SIDE_PIN 18   // #4
 
 #define DAY_MAX_TEMP 30
 #define DAY_TEMP_TOLERANCE 1
@@ -105,9 +105,13 @@ namespace Climate
         // if hot 1,2 temp is < limit - tolerance
         // turn heating on
 
+        Serial.println("1");
         climateData hotSide = readTempHumid(dhtHotSide);
+        Serial.println("2");
         climateData hotCenter = readTempHumid(dhtHotCenter);
+        Serial.println("3");
         climateData coldCenter = readTempHumid(dhtColdCenter);
+        Serial.println("4");
         climateData coldSide = readTempHumid(dhtColdSide);
 
         if (hotSide.t > DAY_MAX_TEMP || hotCenter.t > DAY_MAX_TEMP) {

@@ -14,6 +14,18 @@ void setup() {
   climateSetup();
   ledSetup();
 
+
+  // turnRelayOn();
+  // delay(1000);
+  // turnRelayOff();
+  // delay(1000);
+
+
+  // turnRelayOn();
+  // delay(1000);
+  // turnRelayOff();
+  // delay(1000);
+
 }
 
 void loop() {

@@ -7,6 +7,9 @@ namespace Net
     void connect(){
 
         WiFi.mode(WIFI_STA);
+        WiFi.disconnect();
+        delay(100);
+
         WiFi.setHostname("Terr Controller");
 
         int status = WL_IDLE_STATUS;     // the Wifi radio's status

@@ -10,6 +10,44 @@ const int   daylightOffset_sec = 3600 * 2;
 
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
         printLocalTime();
+
+        Serial.print("time as int: ");
+        Serial.print(getHour());
+        Serial.print(":");
+        Serial.println(getMinute());
+    }
+
+    int getHour(){
+
+        struct tm timeinfo;
+        if(!getLocalTime(&timeinfo)){
+            Serial.println("Failed to obtain time");
+            return 0;
+        }
+
+        char timeHour[3];
+        strftime(timeHour,3, "%H", &timeinfo);
+
+        // Serial.print("Hour: ");
+        // Serial.println(timeHour);
+
+        return atoi(timeHour);
+
+    }
+    int getMinute(){
+        struct tm timeinfo;
+        if(!getLocalTime(&timeinfo)){
+            Serial.println("Failed to obtain time");
+            return 0;
+        }
+
+        char timeMinute[3];
+        strftime(timeMinute,3, "%M", &timeinfo);
+
+        // Serial.print("Minute: ");
+        // Serial.println(timeMinute);
+
+        return atoi(timeMinute);
     }
 
     void printLocalTime(){

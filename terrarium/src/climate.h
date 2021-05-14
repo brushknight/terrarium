@@ -11,5 +11,5 @@ namespace Climate
     climateData readTempHumid(DHT_Unified dht);
     void turnRelayOn();
     void turnRelayOff();
-    void climateControl();
+    void climateControl(int hour, int minute);
 }

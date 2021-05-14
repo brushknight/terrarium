@@ -19,15 +19,21 @@ namespace Climate
 
 */
 
+#define DAY_START_HOUR 8
+#define DAY_START_MINUTE 0
+
+#define NIGHT_START_HOUR 20
+#define NIGHT_START_MINUTE 0
+
 #define DHTTYPE DHT22
 #define HEATER_RELAY_PIN 4
 
-#define DHT_HOT_SIDE_PIN 16    // #1
-#define DHT_HOT_CENTER_PIN 17   // #2
+#define DHT_HOT_SIDE_PIN 16   // #1
+#define DHT_HOT_CENTER_PIN 17 // #2
 #define DHT_COLD_CENTER_PIN 5 // #3
-#define DHT_COLD_SIDE_PIN 18   // #4
+#define DHT_COLD_SIDE_PIN 18  // #4
 
-#define DAY_MAX_TEMP 30
+#define DAY_MAX_TEMP 26//30
 #define DAY_TEMP_TOLERANCE 1
 #define NIGHT_MAX_TEMP 24
 #define NIGHT_TEMP_TOLERANCE 1
@@ -83,6 +89,7 @@ namespace Climate
     {
         relayState = LOW;
         digitalWrite(HEATER_RELAY_PIN, relayState);
+        Serial.println("turn relay off");
     }
 
     void climateSetup()
@@ -93,10 +100,13 @@ namespace Climate
         dhtHotCenter.begin();
         dhtColdCenter.begin();
         dhtColdSide.begin();
+        Serial.println("turn relay on");
     }
 
-    void climateControl()
+    void climateControl(int hour, int minute)
     {
+
+        bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
 
         // read all temps
 
@@ -105,27 +115,49 @@ namespace Climate
         // if hot 1,2 temp is < limit - tolerance
         // turn heating on
 
-        Serial.println("1");
+        Serial.print("is day: ");
+        Serial.println(isDay);
+
+        Serial.println("1: hot side");
         climateData hotSide = readTempHumid(dhtHotSide);
-        Serial.println("2");
+        Serial.println("2: hot center");
         climateData hotCenter = readTempHumid(dhtHotCenter);
-        Serial.println("3");
+        Serial.println("3: cold center");
         climateData coldCenter = readTempHumid(dhtColdCenter);
-        Serial.println("4");
+        Serial.println("4: cold side");
         climateData coldSide = readTempHumid(dhtColdSide);
 
-        if (hotSide.t > DAY_MAX_TEMP || hotCenter.t > DAY_MAX_TEMP) {
-            turnRelayOff();
-        }else if (hotSide.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE && hotCenter.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE) {
-            turnRelayOn();
+        if (isDay)
+        {
+
+            if (hotSide.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE && hotCenter.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE)
+            {
+                turnRelayOn();
+            }else{
+                turnRelayOff();
+            }
+
+            // safety check
+            if (hotSide.t > DAY_MAX_TEMP || hotCenter.t > DAY_MAX_TEMP)
+            {
+                turnRelayOff();
+            }
         }
+        else
+        {
 
+            if (hotSide.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE && hotCenter.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE)
+            {
+                turnRelayOn();
+            }else{
+                turnRelayOff();
+            }
+
+            // safety check
+            if (hotSide.t > NIGHT_MAX_TEMP || hotCenter.t > NIGHT_MAX_TEMP)
+            {
+                turnRelayOff();
+            }
+        }
     }
-
 }
-
-// define temparature schedule
-
-// function to read sensors data
-
-// function to check senrsors temps and switch heating

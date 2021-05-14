@@ -4,4 +4,6 @@
 namespace RealTime{
     void syncTime();
     void printLocalTime();
+    int getHour();
+    int getMinute();
 }

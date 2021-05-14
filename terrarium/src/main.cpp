@@ -8,47 +8,25 @@ using namespace RealTime;
 
 uint32_t delayMS = 1000;
 
-
-#define STATUS_LED 2
-
-
-void setup() {
+void setup()
+{
   Serial.begin(9600);
-
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
-  delay(100);
 
   connect();
   syncTime();
   printLocalTime();
 
-  securitySetup();
+  // securitySetup();
   climateSetup();
-  ledSetup();
-
-
-  // turnRelayOn();
-  // delay(1000);
-  // turnRelayOff();
-  // delay(1000);
-
-
-  // turnRelayOn();
-  // delay(1000);
-  // turnRelayOff();
-  // delay(1000);
-
+  // ledSetup();
 }
 
-void loop() {
-  
-  
-  turnLedOn(255,0,0);
-  climateControl();
-  securityCheck();
+void loop()
+{
 
-  digitalWrite(STATUS_LED, 1);
+  // turnLedOn(255,0,0);
+  climateControl(getHour(), getMinute());
+  // securityCheck();
 
   delay(delayMS);
 }

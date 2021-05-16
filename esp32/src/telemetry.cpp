@@ -16,7 +16,9 @@ namespace Telemetry
         http.begin(TELEMETRY_ENDPOINT);
         http.addHeader("Content-Type", "application/json");
 
-        StaticJsonDocument<200> doc;
+        StaticJsonDocument<400> doc;
+
+        doc["heater"] = telemteryData.heater;
 
         doc.createNestedObject("hot_side");
         doc["hot_side"]["H"] = telemteryData.hotSide.h;
@@ -37,8 +39,18 @@ namespace Telemetry
         doc["cold_side"]["H"] = telemteryData.coldSide.h;
         doc["cold_side"]["T"] = telemteryData.coldSide.t;
        
+
+        doc.createNestedObject("climate_config");
+        doc["climate_config"]["day_max_temp"] = telemteryData.climateConfig.dayMaxTemp;
+        doc["climate_config"]["night_max_temp"] = telemteryData.climateConfig.nightMaxTemp;
+        doc["climate_config"]["day_temp_tolerance"] = telemteryData.climateConfig.dayTempTolerance;
+        doc["climate_config"]["night_temp_tolerance"] = telemteryData.climateConfig.nightTempTolerance;
+
+
         String requestBody;
         serializeJson(doc, requestBody);
+
+        Serial.println(requestBody);
 
         int httpResponseCode = http.POST(requestBody);
 
@@ -47,8 +59,8 @@ namespace Telemetry
 
             String response = http.getString();
 
-            Serial.println(httpResponseCode);
-            Serial.println(response);
+            // Serial.println(httpResponseCode);
+            // Serial.println(response);
         }
         else
         {

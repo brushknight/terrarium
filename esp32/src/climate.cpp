@@ -1,10 +1,7 @@
 #include "climate.h"
 
-
 namespace Climate
 {
-
-
 
     /* schedule
 
@@ -30,7 +27,7 @@ namespace Climate
 #define DHT_COLD_CENTER_PIN 5 // #3
 #define DHT_COLD_SIDE_PIN 18  // #4
 
-#define DAY_MAX_TEMP 30//30
+#define DAY_MAX_TEMP 30 //30
 #define DAY_TEMP_TOLERANCE 1
 #define NIGHT_MAX_TEMP 24
 #define NIGHT_TEMP_TOLERANCE 1
@@ -51,27 +48,27 @@ namespace Climate
         dht.temperature().getEvent(&event);
         if (isnan(event.temperature))
         {
-            Serial.println(F("Error reading temperature!"));
+            // Serial.println(F("Error reading temperature!"));
         }
         else
         {
             data.t = event.temperature;
-            Serial.print(F("Temperature: "));
-            Serial.print(event.temperature);
-            Serial.println(F("°C"));
+            // Serial.print(F("Temperature: "));
+            // Serial.print(event.temperature);
+            // Serial.println(F("°C"));
         }
         // Get humidity event and print its value.
         dht.humidity().getEvent(&event);
         if (isnan(event.relative_humidity))
         {
-            Serial.println(F("Error reading humidity!"));
+            // Serial.println(F("Error reading humidity!"));
         }
         else
         {
             data.h = event.relative_humidity;
-            Serial.print(F("Humidity: "));
-            Serial.print(event.relative_humidity);
-            Serial.println(F("%"));
+            // Serial.print(F("Humidity: "));
+            // Serial.print(event.relative_humidity);
+            // Serial.println(F("%"));
         }
         return data;
     }
@@ -80,6 +77,7 @@ namespace Climate
     {
         relayState = HIGH;
         digitalWrite(HEATER_RELAY_PIN, relayState);
+        Serial.println("turn relay on");
     }
 
     void turnRelayOff()
@@ -97,20 +95,12 @@ namespace Climate
         dhtHotCenter.begin();
         dhtColdCenter.begin();
         dhtColdSide.begin();
-        Serial.println("turn relay on");
     }
 
     Telemetry::TelemteryData climateControl(int hour, int minute)
     {
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
-
-        // read all temps
-
-        // if hot 1,2 temp is > limit
-        // turn heating off
-        // if hot 1,2 temp is < limit - tolerance
-        // turn heating on
 
         Serial.print("is day: ");
         Serial.println(isDay);
@@ -124,44 +114,67 @@ namespace Climate
         Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
 
+        Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
+
         if (isDay)
         {
 
             if (hotSide.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE && hotCenter.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE)
             {
                 turnRelayOn();
-            }else{
+                telemetryData.heater = true;
+            }
+            else
+            {
                 turnRelayOff();
+                telemetryData.heater = false;
             }
 
             // safety check
             if (hotSide.t > DAY_MAX_TEMP || hotCenter.t > DAY_MAX_TEMP)
             {
                 turnRelayOff();
+                telemetryData.heater = false;
             }
         }
         else
         {
 
+            // Serial.print("test night condition 1: ");
+            // Serial.println(hotSide.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE);
+
+            // Serial.print("test night condition 2: ");
+            // Serial.println(hotCenter.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE);
+
             if (hotSide.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE && hotCenter.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE)
             {
                 turnRelayOn();
-            }else{
+                telemetryData.heater = true;
+            }
+            else
+            {
                 turnRelayOff();
+                telemetryData.heater = false;
             }
 
             // safety check
             if (hotSide.t > NIGHT_MAX_TEMP || hotCenter.t > NIGHT_MAX_TEMP)
             {
                 turnRelayOff();
+                telemetryData.heater = false;
             }
         }
 
-        Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
         telemetryData.hotSide = hotSide;
         telemetryData.hotCenter = hotCenter;
         telemetryData.coldCenter = coldCenter;
         telemetryData.coldSide = coldSide;
+
+        telemetryData.climateConfig.dayMaxTemp = DAY_MAX_TEMP;
+        telemetryData.climateConfig.nightMaxTemp = NIGHT_MAX_TEMP;
+        telemetryData.climateConfig.dayTempTolerance = DAY_TEMP_TOLERANCE;
+        telemetryData.climateConfig.nightTempTolerance = NIGHT_TEMP_TOLERANCE;
+
         return telemetryData;
     }
 }

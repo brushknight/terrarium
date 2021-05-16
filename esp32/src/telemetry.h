@@ -3,12 +3,19 @@
 
 #include "climate_data.h"
 
-
 namespace Telemetry
 {
 
-
     using namespace Climate;
+
+    class ClimateConfig
+    {
+        public:
+        float dayMaxTemp;
+        float nightMaxTemp;
+        float dayTempTolerance;
+        float nightTempTolerance;
+    };
 
     class TelemteryData
     {
@@ -17,6 +24,8 @@ namespace Telemetry
         ClimateData hotCenter;
         ClimateData coldCenter;
         ClimateData coldSide;
+        ClimateConfig climateConfig;
+        bool heater;
     };
 
     void send(TelemteryData telemteryData);

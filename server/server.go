@@ -16,11 +16,20 @@ type ClimateData struct {
 	H float64 `json:"h"`
 }
 
+type ClimateConfig struct {
+	DayMaxTemp         float64 `json:"day_max_temp"`
+	NightMaxTemp       float64 `json:"night_max_temp"`
+	DayTempTolerance   float64 `json:"day_temp_tolerance"`
+	NightTempTolerance float64 `json:"night_temp_tolerance"`
+}
+
 type Data struct {
-	HotSide    ClimateData `json:"hot_side"`
-	HotCenter  ClimateData `json:"hot_center"`
-	ColdCenter ClimateData `json:"cold_center"`
-	ColdSide   ClimateData `json:"cold_side"`
+	HotSide    ClimateData   `json:"hot_side"`
+	HotCenter  ClimateData   `json:"hot_center"`
+	ColdCenter ClimateData   `json:"cold_center"`
+	ColdSide   ClimateData   `json:"cold_side"`
+	Heater     bool          `json:"heater"`
+	Config     ClimateConfig `json:"climate_config"`
 }
 
 var errResponse struct {

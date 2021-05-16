@@ -88,5 +88,5 @@ func main() {
 	muxRouter.HandleFunc("/api/v1/telemetry", recordTelemetry).Methods("POST")
 	muxRouter.HandleFunc("/api/v1/telemetry", printTelemetry).Methods("GET")
 
-	http.ListenAndServe(":8090", muxRouter)
+	http.ListenAndServe(":80", muxRouter)
 }

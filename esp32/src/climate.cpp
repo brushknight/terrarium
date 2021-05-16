@@ -1,13 +1,10 @@
 #include "climate.h"
 
+
 namespace Climate
 {
 
-    struct climateData
-    {
-        float t;
-        float h;
-    };
+
 
     /* schedule
 
@@ -33,7 +30,7 @@ namespace Climate
 #define DHT_COLD_CENTER_PIN 5 // #3
 #define DHT_COLD_SIDE_PIN 18  // #4
 
-#define DAY_MAX_TEMP 26//30
+#define DAY_MAX_TEMP 30//30
 #define DAY_TEMP_TOLERANCE 1
 #define NIGHT_MAX_TEMP 24
 #define NIGHT_TEMP_TOLERANCE 1
@@ -45,9 +42,9 @@ namespace Climate
 
     volatile byte relayState = LOW;
 
-    climateData readTempHumid(DHT_Unified dht)
+    ClimateData readTempHumid(DHT_Unified dht)
     {
-        climateData data;
+        ClimateData data;
 
         // Get temperature event and print its value.
         sensors_event_t event;
@@ -103,7 +100,7 @@ namespace Climate
         Serial.println("turn relay on");
     }
 
-    void climateControl(int hour, int minute)
+    Telemetry::TelemteryData climateControl(int hour, int minute)
     {
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
@@ -119,13 +116,13 @@ namespace Climate
         Serial.println(isDay);
 
         Serial.println("1: hot side");
-        climateData hotSide = readTempHumid(dhtHotSide);
+        ClimateData hotSide = readTempHumid(dhtHotSide);
         Serial.println("2: hot center");
-        climateData hotCenter = readTempHumid(dhtHotCenter);
+        ClimateData hotCenter = readTempHumid(dhtHotCenter);
         Serial.println("3: cold center");
-        climateData coldCenter = readTempHumid(dhtColdCenter);
+        ClimateData coldCenter = readTempHumid(dhtColdCenter);
         Serial.println("4: cold side");
-        climateData coldSide = readTempHumid(dhtColdSide);
+        ClimateData coldSide = readTempHumid(dhtColdSide);
 
         if (isDay)
         {
@@ -159,5 +156,12 @@ namespace Climate
                 turnRelayOff();
             }
         }
+
+        Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
+        telemetryData.hotSide = hotSide;
+        telemetryData.hotCenter = hotCenter;
+        telemetryData.coldCenter = coldCenter;
+        telemetryData.coldSide = coldSide;
+        return telemetryData;
     }
 }

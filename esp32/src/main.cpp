@@ -5,6 +5,7 @@ using namespace Lighting;
 using namespace Security;
 using namespace Net;
 using namespace RealTime;
+using namespace Telemetry;
 
 uint32_t delayMS = 1000;
 
@@ -23,10 +24,11 @@ void setup()
 
 void loop()
 {
-
   // turnLedOn(255,0,0);
-  climateControl(getHour(), getMinute());
+  TelemteryData telemteryData = climateControl(getHour(), getMinute());
   // securityCheck();
+
+  send(telemteryData);
 
   delay(delayMS);
 }

@@ -6,5 +6,6 @@
 #include "security.h"
 #include "real_time.h"
 #include "net.h"
+#include "telemetry.h"
 
 #endif

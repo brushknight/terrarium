@@ -1,7 +1,7 @@
 .PHONY: build
 build:
-	@docker build --target server -t brushknight/terrarium-proxy:latest -f server/Dockerfile server
+	@docker build --target server -t brushknight/terrarium-server:latest -f server/Dockerfile server
 
 .PHONY: publish
 publish:
-	@docker push brushknight/terrarium-proxy:latest
+	@docker push brushknight/terrarium-server:latest

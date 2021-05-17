@@ -28,9 +28,9 @@ namespace Climate
 #define DHT_COLD_SIDE_PIN 18  // #4
 
 #define DAY_MAX_TEMP 30 //30
-#define DAY_TEMP_TOLERANCE 1
+#define DAY_TEMP_TOLERANCE 0.3
 #define NIGHT_MAX_TEMP 24
-#define NIGHT_TEMP_TOLERANCE 1
+#define NIGHT_TEMP_TOLERANCE 0.3
 
     DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
     DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
@@ -38,6 +38,14 @@ namespace Climate
     DHT_Unified dhtColdSide(DHT_COLD_SIDE_PIN, DHTTYPE);
 
     volatile byte relayState = LOW;
+
+    enum HeaterPhase
+    {
+        heating,
+        cooling
+    };
+
+    HeaterPhase heaterPhase;
 
     ClimateData readTempHumid(DHT_Unified dht)
     {
@@ -75,14 +83,16 @@ namespace Climate
 
     void turnRelayOn()
     {
-        relayState = HIGH;
+        relayState = LOW;
+        heaterPhase = heating;
         digitalWrite(HEATER_RELAY_PIN, relayState);
         Serial.println("turn relay on");
     }
 
     void turnRelayOff()
     {
-        relayState = LOW;
+        relayState = HIGH;
+        heaterPhase = cooling;
         digitalWrite(HEATER_RELAY_PIN, relayState);
         Serial.println("turn relay off");
     }
@@ -102,36 +112,37 @@ namespace Climate
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
 
-        Serial.print("is day: ");
-        Serial.println(isDay);
+        // Serial.print("is day: ");
+        // Serial.println(isDay);
 
-        Serial.println("1: hot side");
+        // Serial.println("1: hot side");
         ClimateData hotSide = readTempHumid(dhtHotSide);
-        Serial.println("2: hot center");
+        // Serial.println("2: hot center");
         ClimateData hotCenter = readTempHumid(dhtHotCenter);
-        Serial.println("3: cold center");
+        // Serial.println("3: cold center");
         ClimateData coldCenter = readTempHumid(dhtColdCenter);
-        Serial.println("4: cold side");
+        // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
 
-        if (isDay)
-        {
+        float maxTemp = DAY_MAX_TEMP;
+        float minTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE;
 
-            if (hotSide.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE && hotCenter.t < DAY_MAX_TEMP - DAY_TEMP_TOLERANCE)
+        if (!isDay)
+        {
+            maxTemp = NIGHT_MAX_TEMP;
+            minTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE;
+        }
+
+        if (heaterPhase == cooling)
+        {
+            if (hotSide.t < minTemp && hotCenter.t < minTemp)
             {
                 turnRelayOn();
                 telemetryData.heater = true;
             }
             else
-            {
-                turnRelayOff();
-                telemetryData.heater = false;
-            }
-
-            // safety check
-            if (hotSide.t > DAY_MAX_TEMP || hotCenter.t > DAY_MAX_TEMP)
             {
                 turnRelayOff();
                 telemetryData.heater = false;
@@ -139,29 +150,15 @@ namespace Climate
         }
         else
         {
-
-            // Serial.print("test night condition 1: ");
-            // Serial.println(hotSide.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE);
-
-            // Serial.print("test night condition 2: ");
-            // Serial.println(hotCenter.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE);
-
-            if (hotSide.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE && hotCenter.t < NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE)
+            if (hotSide.t > maxTemp || hotCenter.t > maxTemp)
             {
-                turnRelayOn();
-                telemetryData.heater = true;
+                turnRelayOff();
+                telemetryData.heater = false;
             }
             else
             {
-                turnRelayOff();
-                telemetryData.heater = false;
-            }
-
-            // safety check
-            if (hotSide.t > NIGHT_MAX_TEMP || hotCenter.t > NIGHT_MAX_TEMP)
-            {
-                turnRelayOff();
-                telemetryData.heater = false;
+                turnRelayOn();
+                telemetryData.heater = true;
             }
         }
 

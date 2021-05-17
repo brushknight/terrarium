@@ -8,7 +8,7 @@ namespace Telemetry
     void send(TelemteryData telemteryData)
     {
 
-        const char*  TELEMETRY_ENDPOINT = "http://10.0.4.111:8090/api/v1/telemetry";
+        const char*  TELEMETRY_ENDPOINT = "http://terrarium.lab/api/v1/telemetry";
 
 
         HTTPClient http;

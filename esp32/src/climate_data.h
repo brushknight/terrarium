@@ -11,6 +11,13 @@ namespace Climate
          float t;
          float h;
     };
+
+
+    enum HeaterPhase
+    {
+        heating,
+        cooling
+    };
 }
 
 #endif

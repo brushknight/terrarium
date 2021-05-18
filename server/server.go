@@ -24,12 +24,13 @@ type ClimateConfig struct {
 }
 
 type Data struct {
-	HotSide    ClimateData   `json:"hot_side"`
-	HotCenter  ClimateData   `json:"hot_center"`
-	ColdCenter ClimateData   `json:"cold_center"`
-	ColdSide   ClimateData   `json:"cold_side"`
-	Heater     bool          `json:"heater"`
-	Config     ClimateConfig `json:"climate_config"`
+	HotSide     ClimateData   `json:"hot_side"`
+	HotCenter   ClimateData   `json:"hot_center"`
+	ColdCenter  ClimateData   `json:"cold_center"`
+	ColdSide    ClimateData   `json:"cold_side"`
+	Heater      bool          `json:"heater"`
+	Config      ClimateConfig `json:"climate_config"`
+	HeaterPhase string        `json:"heater_phase"`
 }
 
 var errResponse struct {

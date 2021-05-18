@@ -39,11 +39,6 @@ namespace Climate
 
     volatile byte relayState = LOW;
 
-    enum HeaterPhase
-    {
-        heating,
-        cooling
-    };
 
     HeaterPhase heaterPhase;
 
@@ -166,6 +161,7 @@ namespace Climate
         telemetryData.hotCenter = hotCenter;
         telemetryData.coldCenter = coldCenter;
         telemetryData.coldSide = coldSide;
+        telemetryData.heaterPhase = heaterPhase;
 
         telemetryData.climateConfig.dayMaxTemp = DAY_MAX_TEMP;
         telemetryData.climateConfig.nightMaxTemp = NIGHT_MAX_TEMP;

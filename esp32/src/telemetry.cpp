@@ -19,6 +19,13 @@ namespace Telemetry
         StaticJsonDocument<400> doc;
 
         doc["heater"] = telemteryData.heater;
+        if (telemteryData.heaterPhase == cooling){
+            doc["heater_phase"] = "cooling";
+        }else{
+            doc["heater_phase"] = "heating";
+        }
+        
+
 
         doc.createNestedObject("hot_side");
         doc["hot_side"]["H"] = telemteryData.hotSide.h;

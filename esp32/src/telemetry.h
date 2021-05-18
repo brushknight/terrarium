@@ -26,6 +26,7 @@ namespace Telemetry
         ClimateData coldSide;
         ClimateConfig climateConfig;
         bool heater;
+        HeaterPhase heaterPhase;
     };
 
     void send(TelemteryData telemteryData);

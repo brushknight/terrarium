@@ -27,10 +27,12 @@ namespace Climate
 #define DHT_COLD_CENTER_PIN 5 // #3
 #define DHT_COLD_SIDE_PIN 18  // #4
 
-#define DAY_MAX_TEMP 30 //30
-#define DAY_TEMP_TOLERANCE 0.3
+#define DAY_MAX_TEMP 30
+#define DAY_TEMP_TOLERANCE_WARM 0.5
+#define DAY_TEMP_TOLERANCE_COLD 0.1
 #define NIGHT_MAX_TEMP 24
-#define NIGHT_TEMP_TOLERANCE 0.3
+#define NIGHT_TEMP_TOLERANCE_WARM 0.5
+#define NIGHT_TEMP_TOLERANCE_COLD 0.1
 
     DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
     DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
@@ -121,13 +123,13 @@ namespace Climate
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
 
-        float maxTemp = DAY_MAX_TEMP;
-        float minTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE;
+        float maxTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE_WARM;
+        float minTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE_COLD;
 
         if (!isDay)
         {
-            maxTemp = NIGHT_MAX_TEMP;
-            minTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE;
+            maxTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_WARM;
+            minTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_COLD;
         }
 
         if (heaterPhase == cooling)
@@ -165,8 +167,10 @@ namespace Climate
 
         telemetryData.climateConfig.dayMaxTemp = DAY_MAX_TEMP;
         telemetryData.climateConfig.nightMaxTemp = NIGHT_MAX_TEMP;
-        telemetryData.climateConfig.dayTempTolerance = DAY_TEMP_TOLERANCE;
-        telemetryData.climateConfig.nightTempTolerance = NIGHT_TEMP_TOLERANCE;
+        telemetryData.climateConfig.dayTempToleranceWarm = DAY_TEMP_TOLERANCE_WARM;
+        telemetryData.climateConfig.dayTempToleranceCold = DAY_TEMP_TOLERANCE_COLD;
+        telemetryData.climateConfig.nightTempToleranceWarm = NIGHT_TEMP_TOLERANCE_WARM;
+        telemetryData.climateConfig.nightTempToleranceCold = NIGHT_TEMP_TOLERANCE_COLD;
 
         return telemetryData;
     }

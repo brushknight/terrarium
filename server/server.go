@@ -19,8 +19,10 @@ type ClimateData struct {
 type ClimateConfig struct {
 	DayMaxTemp         float64 `json:"day_max_temp"`
 	NightMaxTemp       float64 `json:"night_max_temp"`
-	DayTempTolerance   float64 `json:"day_temp_tolerance"`
-	NightTempTolerance float64 `json:"night_temp_tolerance"`
+	DayTempToleranceWarm   float64 `json:"day_temp_tolerance_warm"`
+	NightTempToleranceWarm float64 `json:"night_temp_tolerance_warm"`
+	DayTempToleranceCold   float64 `json:"day_temp_tolerance_cold"`
+	NightTempToleranceCold float64 `json:"night_temp_tolerance_cold"`
 }
 
 type Data struct {

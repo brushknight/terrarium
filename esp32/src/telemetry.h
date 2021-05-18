@@ -13,8 +13,10 @@ namespace Telemetry
         public:
         float dayMaxTemp;
         float nightMaxTemp;
-        float dayTempTolerance;
-        float nightTempTolerance;
+        float dayTempToleranceWarm;
+        float dayTempToleranceCold;
+        float nightTempToleranceWarm;
+        float nightTempToleranceCold;
     };
 
     class TelemteryData

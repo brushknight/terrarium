@@ -50,8 +50,10 @@ namespace Telemetry
         doc.createNestedObject("climate_config");
         doc["climate_config"]["day_max_temp"] = telemteryData.climateConfig.dayMaxTemp;
         doc["climate_config"]["night_max_temp"] = telemteryData.climateConfig.nightMaxTemp;
-        doc["climate_config"]["day_temp_tolerance"] = telemteryData.climateConfig.dayTempTolerance;
-        doc["climate_config"]["night_temp_tolerance"] = telemteryData.climateConfig.nightTempTolerance;
+        doc["climate_config"]["day_temp_tolerance_warm"] = telemteryData.climateConfig.dayTempToleranceWarm;
+        doc["climate_config"]["night_temp_tolerance_warm"] = telemteryData.climateConfig.nightTempToleranceWarm;
+        doc["climate_config"]["day_temp_tolerance_cold"] = telemteryData.climateConfig.dayTempToleranceCold;
+        doc["climate_config"]["night_temp_tolerance_cold"] = telemteryData.climateConfig.nightTempToleranceCold;
 
 
         String requestBody;

@@ -27,12 +27,12 @@ namespace Climate
 #define DHT_COLD_CENTER_PIN 5 // #3
 #define DHT_COLD_SIDE_PIN 18  // #4
 
-#define DAY_MAX_TEMP 30
+#define DAY_MAX_TEMP 28.5
 #define DAY_TEMP_TOLERANCE_WARM 0.5
-#define DAY_TEMP_TOLERANCE_COLD 0.1
-#define NIGHT_MAX_TEMP 24
+#define DAY_TEMP_TOLERANCE_COLD 0.6
+#define NIGHT_MAX_TEMP 23
 #define NIGHT_TEMP_TOLERANCE_WARM 0.5
-#define NIGHT_TEMP_TOLERANCE_COLD 0.1
+#define NIGHT_TEMP_TOLERANCE_COLD 0.6
 
     DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
     DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
@@ -134,7 +134,7 @@ namespace Climate
 
         if (heaterPhase == cooling)
         {
-            if (hotSide.t < minTemp && hotCenter.t < minTemp)
+            if (hotSide.t <= minTemp && hotCenter.t <= minTemp)
             {
                 turnRelayOn();
                 telemetryData.heater = true;
@@ -147,7 +147,7 @@ namespace Climate
         }
         else
         {
-            if (hotSide.t > maxTemp || hotCenter.t > maxTemp)
+            if (hotSide.t >= maxTemp || hotCenter.t >= maxTemp)
             {
                 turnRelayOff();
                 telemetryData.heater = false;

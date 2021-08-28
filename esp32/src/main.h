@@ -7,5 +7,6 @@
 #include "real_time.h"
 #include "net.h"
 #include "telemetry.h"
+#include "display.h"
 
 #endif

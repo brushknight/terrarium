@@ -18,6 +18,7 @@ namespace Net
         while (status != WL_CONNECTED) {
             Serial.print("Attempting to connect SSID: ");
             Serial.println(WIFI_SSID);
+            Display::renderConnectingToWifi(WIFI_SSID);
             status = WiFi.begin(WIFI_SSID, WIFI_PASS);
 
             // wait 10 seconds for connection:
@@ -26,6 +27,7 @@ namespace Net
 
         // you're connected now, so print out the data:
         Serial.print("You're connected to the network");
+        Display::renderConnectedToWifi(WIFI_SSID);
 
     }
 }

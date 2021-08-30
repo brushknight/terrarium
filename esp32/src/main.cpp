@@ -16,7 +16,7 @@ void setup()
   displaySetup();
   
   connect();
-  syncTime();
+  setupRtcModule();
   printLocalTime();
 
   //securitySetup();

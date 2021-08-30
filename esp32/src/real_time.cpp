@@ -1,12 +1,46 @@
 #include "real_time.h"
 
-namespace RealTime{
+namespace RealTime
+{
 
-const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec = 0;
-const int   daylightOffset_sec = 3600 * 2;
+    const char *ntpServer = "pool.ntp.org";
+    const long gmtOffset_sec = 0;
+    const int daylightOffset_sec = 3600 * 2;
 
-    void syncTime(){
+    RTC_DS3231 rtc;
+
+    void setupRtcModule()
+    {
+        if (!rtc.begin())
+        {
+            Serial.println("Couldn't find RTC!");
+            Serial.flush();
+            abort();
+        }
+
+        if (rtc.lostPower())
+        {
+            Serial.println("RTC: lost power");
+            syncTime();
+
+            struct tm timeinfo;
+            if (!getLocalTime(&timeinfo))
+            {
+                Serial.println("Failed to obtain time");
+                return;
+            }
+
+            // involve ntp here
+            // this will adjust to the date and time at compilation
+            rtc.adjust(mktime(&timeinfo));
+        }
+
+        Serial.println("RTC: now");
+        Serial.println(rtc.now().hour());
+    }
+
+    void syncTime()
+    {
 
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
         printLocalTime();
@@ -17,32 +51,35 @@ const int   daylightOffset_sec = 3600 * 2;
         Serial.println(getMinute());
     }
 
-    int getHour(){
+    int getHour()
+    {
 
         struct tm timeinfo;
-        if(!getLocalTime(&timeinfo)){
+        if (!getLocalTime(&timeinfo))
+        {
             Serial.println("Failed to obtain time");
             return 0;
         }
 
         char timeHour[3];
-        strftime(timeHour,3, "%H", &timeinfo);
+        strftime(timeHour, 3, "%H", &timeinfo);
 
         // Serial.print("Hour: ");
         // Serial.println(timeHour);
 
         return atoi(timeHour);
-
     }
-    int getMinute(){
+    int getMinute()
+    {
         struct tm timeinfo;
-        if(!getLocalTime(&timeinfo)){
+        if (!getLocalTime(&timeinfo))
+        {
             Serial.println("Failed to obtain time");
             return 0;
         }
 
         char timeMinute[3];
-        strftime(timeMinute,3, "%M", &timeinfo);
+        strftime(timeMinute, 3, "%M", &timeinfo);
 
         // Serial.print("Minute: ");
         // Serial.println(timeMinute);
@@ -50,9 +87,11 @@ const int   daylightOffset_sec = 3600 * 2;
         return atoi(timeMinute);
     }
 
-    void printLocalTime(){
+    void printLocalTime()
+    {
         struct tm timeinfo;
-        if(!getLocalTime(&timeinfo)){
+        if (!getLocalTime(&timeinfo))
+        {
             Serial.println("Failed to obtain time");
             return;
         }
@@ -76,14 +115,12 @@ const int   daylightOffset_sec = 3600 * 2;
 
         Serial.println("Time variables");
         char timeHour[3];
-        strftime(timeHour,3, "%H", &timeinfo);
+        strftime(timeHour, 3, "%H", &timeinfo);
         Serial.println(timeHour);
         char timeWeekDay[10];
-        strftime(timeWeekDay,10, "%A", &timeinfo);
+        strftime(timeWeekDay, 10, "%A", &timeinfo);
         Serial.println(timeWeekDay);
         Serial.println();
     }
 
 }
-// sync time via http 
-// support for time module later

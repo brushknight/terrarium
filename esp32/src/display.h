@@ -11,5 +11,6 @@ namespace Display
      void renderClimate(Telemetry::TelemteryData telemteryData);
      void renderConnectingToWifi(char* ssid);
      void renderConnectedToWifi(char* ssid);
+     char * tempToString(double value);
 }
 #endif

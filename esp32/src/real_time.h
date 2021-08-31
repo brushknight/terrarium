@@ -8,9 +8,10 @@
 namespace RealTime{
     void syncTime();
     void setupRtcModule();
-    void printLocalTime();
     int getHour();
     int getMinute();
+    int getSecond();
+    void printLocalTime();
 }
 
 #endif

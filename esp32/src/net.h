@@ -8,7 +8,6 @@
 namespace Net
 {
     void connect();
-
 }
 
 #endif

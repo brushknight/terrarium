@@ -17,7 +17,6 @@ void setup()
   
   connect();
   setupRtcModule();
-  printLocalTime();
 
   //securitySetup();
   climateSetup();
@@ -36,6 +35,7 @@ void loop()
 
 
   renderClimate(telemteryData);
+  renderTime(getHour(), getMinute(), getSecond());
 
   delay(delayMS);
 }

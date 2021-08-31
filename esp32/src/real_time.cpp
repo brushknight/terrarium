@@ -3,7 +3,9 @@
 namespace RealTime
 {
 
-    const char *ntpServer = "pool.ntp.org";
+    const char *ntpServer1 = "3.es.pool.ntp.org";
+    const char *ntpServer2 = "1.europe.pool.ntp.org";
+    const char *ntpServer3 = "2.europe.pool.ntp.org";
     const long gmtOffset_sec = 0;
     const int daylightOffset_sec = 3600 * 2;
 
@@ -18,7 +20,7 @@ namespace RealTime
             abort();
         }
 
-        if (rtc.lostPower())
+        //if (rtc.lostPower())
         {
             Serial.println("RTC: lost power");
             syncTime();
@@ -35,56 +37,29 @@ namespace RealTime
             rtc.adjust(mktime(&timeinfo));
         }
 
+        printLocalTime();
         Serial.println("RTC: now");
         Serial.println(rtc.now().hour());
     }
 
     void syncTime()
     {
-
-        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-        printLocalTime();
-
-        Serial.print("time as int: ");
-        Serial.print(getHour());
-        Serial.print(":");
-        Serial.println(getMinute());
+        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2, ntpServer3);
     }
 
     int getHour()
     {
-
-        struct tm timeinfo;
-        if (!getLocalTime(&timeinfo))
-        {
-            Serial.println("Failed to obtain time");
-            return 0;
-        }
-
-        char timeHour[3];
-        strftime(timeHour, 3, "%H", &timeinfo);
-
-        // Serial.print("Hour: ");
-        // Serial.println(timeHour);
-
-        return atoi(timeHour);
+        return int(rtc.now().hour());
     }
+
     int getMinute()
     {
-        struct tm timeinfo;
-        if (!getLocalTime(&timeinfo))
-        {
-            Serial.println("Failed to obtain time");
-            return 0;
-        }
+        return int(rtc.now().minute());
+    }
 
-        char timeMinute[3];
-        strftime(timeMinute, 3, "%M", &timeinfo);
-
-        // Serial.print("Minute: ");
-        // Serial.println(timeMinute);
-
-        return atoi(timeMinute);
+    int getSecond()
+    {
+        return int(rtc.now().second());
     }
 
     void printLocalTime()
@@ -122,5 +97,4 @@ namespace RealTime
         Serial.println(timeWeekDay);
         Serial.println();
     }
-
 }

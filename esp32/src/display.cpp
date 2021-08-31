@@ -3,13 +3,14 @@
 namespace Display
 {
 
-int lcdColumns = 20;
-int lcdRows = 4;
+    int lcdColumns = 20;
+    int lcdRows = 4;
 
-LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);  
+    LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 
-    void renderClimate(Telemetry::TelemteryData telemteryData){
-        lcd.clear(); 
+    void renderClimate(Telemetry::TelemteryData telemteryData)
+    {
+        lcd.clear();
         // set cursor to first column, first row
         lcd.setCursor(0, 0);
         // print message
@@ -36,28 +37,50 @@ LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
         lcd.setCursor(0, 2);
         lcd.print("heater ");
         lcd.setCursor(7, 2);
-        if (telemteryData.heater){
+        if (telemteryData.heater)
+        {
             lcd.print("ON");
-        }else{
+        }
+        else
+        {
             lcd.print("OFF");
         }
         lcd.setCursor(11, 2);
-        if (telemteryData.heaterPhase == Climate::HeaterPhase::cooling){
+        if (telemteryData.heaterPhase == Climate::HeaterPhase::cooling)
+        {
             lcd.print("cooling");
-        }else{
+        }
+        else
+        {
             lcd.print("heating");
         }
     }
 
-    char * tempToString(double value){
-        static char buffer [5];
+    char *tempToString(double value)
+    {
+        static char buffer[5];
         sprintf(buffer, "%.1fC", value);
         Serial.println(buffer);
         return buffer;
     }
 
-    void renderConnectingToWifi(char* ssid){
-        lcd.clear(); 
+    void renderTime(int hour, int minute, int second)
+    {
+        lcd.setCursor(11, 3);
+        lcd.print(hour);
+        lcd.setCursor(13, 3);
+        lcd.print(":");
+        lcd.setCursor(14, 3);
+        lcd.print(minute);
+        lcd.setCursor(16, 3);
+        lcd.print(":");
+        lcd.setCursor(17, 3);
+        lcd.print(second);
+    }
+
+    void renderConnectingToWifi(char *ssid)
+    {
+        lcd.clear();
         // set cursor to first column, first row
         lcd.setCursor(0, 0);
         lcd.print("Connecting to WiFi");
@@ -66,8 +89,9 @@ LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
         lcd.print(ssid);
     }
 
-    void renderConnectedToWifi(char* ssid){
-        lcd.clear(); 
+    void renderConnectedToWifi(char *ssid)
+    {
+        lcd.clear();
         // set cursor to first column, first row
         lcd.setCursor(0, 0);
         lcd.print("Connected to WiFi");
@@ -76,10 +100,11 @@ LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
         lcd.print(ssid);
     }
 
-    void displaySetup(){
+    void displaySetup()
+    {
         // initialize LCD
         lcd.init();
-        // turn on LCD backlight                      
+        // turn on LCD backlight
         lcd.backlight();
         Serial.println("displaySetup: ok");
     }

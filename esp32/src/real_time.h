@@ -13,6 +13,7 @@ namespace RealTime{
     int getMinute();
     int getSecond();
     void printLocalTime();
+    uint32_t getTimestamp();
 }
 
 #endif

@@ -6,7 +6,7 @@ namespace RealTime
     const char *ntpServer1 = "pool.ntp.org";
     const char *ntpServer2 = "1.europe.pool.ntp.org";
     const char *ntpServer3 = "2.europe.pool.ntp.org";
-    const long gmtOffset_sec = 0; // todo fix this to be +1
+    const long gmtOffset_sec = 0;     // todo fix this to be +1
     const int daylightOffset_sec = 0; // fix this to accept DST
 
     RTC_DS3231 rtc;
@@ -33,7 +33,8 @@ namespace RealTime
                 Serial.println("Failed to obtain time, retry");
                 syncTime();
                 Display::renderNtp(attempts);
-                if (attempts >= 20){
+                if (attempts >= 20)
+                {
                     attempts = 0;
                 }
             }
@@ -64,6 +65,11 @@ namespace RealTime
     int getSecond()
     {
         return int(rtc.now().second());
+    }
+
+    uint32_t getTimestamp()
+    {
+        return rtc.now().secondstime();
     }
 
     void printLocalTime()

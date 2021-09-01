@@ -4,40 +4,48 @@ using namespace Climate;
 using namespace Lighting;
 using namespace Security;
 using namespace Net;
-using namespace RealTime;
 using namespace Telemetry;
 using namespace Display;
 
-uint32_t delayMS = 1000;
+uint32_t delayMS = 100;
+uint32_t lastSensorFetch = 0;
+uint32_t lastTimeRender = 0;
 
 void setup()
 {
   Serial.begin(115200);
   displaySetup();
-  
+
   connect();
-  setupRtcModule();
+  RealTime::setupRtcModule();
 
   //securitySetup();
   climateSetup();
   //ledSetup();
 
+  Encoder::setup();
 }
 
 void loop()
 {
+  Encoder::tick();
+  //Encoder::isTurn();
+  int now = RealTime::getTimestamp();
   // turnLedOn(255,0,0);
-  TelemteryData telemteryData = climateControl(getHour(), getMinute());
-  // securityCheck();
 
-  //send(telemteryData);
+  if (now - lastSensorFetch > 15)
+  {
+    TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute());
+    renderClimate(telemteryData);
+    lastSensorFetch = now;
+    //send(telemteryData)
+  }
 
-
-
-  renderClimate(telemteryData);
-  renderTime(getHour(), getMinute(), getSecond());
-
-  delay(delayMS);
+  if (now - lastTimeRender > 1)
+  {
+    renderTime(RealTime::getHour(), RealTime::getMinute(), RealTime::getSecond());
+    lastTimeRender = now;
+  }
 }
 
 /*

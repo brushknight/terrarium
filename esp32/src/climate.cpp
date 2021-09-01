@@ -5,6 +5,8 @@ namespace Climate
 
     /* schedule
 
+TODO: add 2 hour difference for UTC timezone
+
 08 - 20 hot max 29.5
 20 - 8 hot max 25
 
@@ -40,7 +42,6 @@ namespace Climate
     DHT_Unified dhtColdSide(DHT_COLD_SIDE_PIN, DHTTYPE);
 
     volatile byte relayState = LOW;
-
 
     HeaterPhase heaterPhase;
 
@@ -83,7 +84,7 @@ namespace Climate
         relayState = LOW;
         heaterPhase = heating;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        Serial.println("turn relay on");
+        //Serial.println("turn relay on");
     }
 
     void turnRelayOff()
@@ -91,7 +92,7 @@ namespace Climate
         relayState = HIGH;
         heaterPhase = cooling;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        Serial.println("turn relay off");
+        //Serial.println("turn relay off");
     }
 
     void climateSetup()

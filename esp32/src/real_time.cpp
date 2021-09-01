@@ -3,11 +3,11 @@
 namespace RealTime
 {
 
-    const char *ntpServer1 = "3.es.pool.ntp.org";
+    const char *ntpServer1 = "pool.ntp.org";
     const char *ntpServer2 = "1.europe.pool.ntp.org";
     const char *ntpServer3 = "2.europe.pool.ntp.org";
-    const long gmtOffset_sec = 0;
-    const int daylightOffset_sec = 3600 * 2;
+    const long gmtOffset_sec = 0; // todo fix this to be +1
+    const int daylightOffset_sec = 0; // fix this to accept DST
 
     RTC_DS3231 rtc;
 
@@ -20,20 +20,24 @@ namespace RealTime
             abort();
         }
 
-        //if (rtc.lostPower())
+        if (rtc.lostPower())
         {
             Serial.println("RTC: lost power");
             syncTime();
 
             struct tm timeinfo;
-            if (!getLocalTime(&timeinfo))
+            int attempts = 0;
+            while (!getLocalTime(&timeinfo))
             {
-                Serial.println("Failed to obtain time");
-                return;
+                attempts++;
+                Serial.println("Failed to obtain time, retry");
+                syncTime();
+                Display::renderNtp(attempts);
+                if (attempts >= 20){
+                    attempts = 0;
+                }
             }
 
-            // involve ntp here
-            // this will adjust to the date and time at compilation
             rtc.adjust(mktime(&timeinfo));
         }
 

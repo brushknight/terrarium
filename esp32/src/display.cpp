@@ -11,32 +11,20 @@ namespace Display
     void renderClimate(Telemetry::TelemteryData telemteryData)
     {
         lcd.clear();
-        // set cursor to first column, first row
         lcd.setCursor(0, 0);
-        // print message
-        lcd.print("H.S ");
-        lcd.setCursor(4, 0);
-        // print message
         lcd.print(tempToString(telemteryData.hotSide.t));
-
-        lcd.setCursor(10, 0);
-        lcd.print("H.C ");
-        lcd.setCursor(14, 0);
+        lcd.print("|");
+        lcd.setCursor(5, 0);
         lcd.print(tempToString(telemteryData.hotSide.t));
-
-        lcd.setCursor(0, 1);
-        lcd.print("C.C ");
-        lcd.setCursor(4, 1);
+        lcd.setCursor(11, 0);
         lcd.print(tempToString(telemteryData.hotSide.t));
-
-        lcd.setCursor(10, 1);
-        lcd.print("C.S ");
-        lcd.setCursor(14, 1);
+        lcd.print("|");
+        lcd.setCursor(16, 0);
         lcd.print(tempToString(telemteryData.hotSide.t));
 
         lcd.setCursor(0, 2);
-        lcd.print("heater ");
-        lcd.setCursor(7, 2);
+        lcd.print("heater");
+        lcd.setCursor(0, 3);
         if (telemteryData.heater)
         {
             lcd.print("ON");
@@ -45,7 +33,7 @@ namespace Display
         {
             lcd.print("OFF");
         }
-        lcd.setCursor(11, 2);
+        lcd.setCursor(13, 2);
         if (telemteryData.heaterPhase == Climate::HeaterPhase::cooling)
         {
             lcd.print("cooling");
@@ -59,26 +47,21 @@ namespace Display
     char *tempToString(double value)
     {
         static char buffer[5];
-        sprintf(buffer, "%.1fC", value);
-        Serial.println(buffer);
+        sprintf(buffer, "%.1f", value);
+        //Serial.println(buffer);
         return buffer;
     }
 
     void renderTime(int hour, int minute, int second)
     {
-        lcd.setCursor(11, 3);
-        lcd.print(hour);
-        lcd.setCursor(13, 3);
-        lcd.print(":");
-        lcd.setCursor(14, 3);
-        lcd.print(minute);
-        lcd.setCursor(16, 3);
-        lcd.print(":");
-        lcd.setCursor(17, 3);
-        lcd.print(second);
+        char buffer[20];
+        sprintf(buffer, "%02d:%02d:%02d", hour, minute, second);
+
+        lcd.setCursor(12, 3);
+        lcd.print(buffer);
     }
 
-    void renderConnectingToWifi(char *ssid)
+    void renderConnectingToWifi(char *ssid, int attempts)
     {
         lcd.clear();
         // set cursor to first column, first row
@@ -87,6 +70,25 @@ namespace Display
 
         lcd.setCursor(0, 1);
         lcd.print(ssid);
+
+        lcd.setCursor(0, 2);
+        for (int i = 0; i < attempts; i++)
+        {
+            lcd.print("*");
+        }
+    }
+
+    void renderNtp(int attempts){
+        lcd.clear();
+        // set cursor to first column, first row
+        lcd.setCursor(0, 0);
+        lcd.print("Fetching time from NTP");
+
+        lcd.setCursor(0, 1);
+        for (int i = 0; i < attempts; i++)
+        {
+            lcd.print("*");
+        }
     }
 
     void renderConnectedToWifi(char *ssid)

@@ -59,7 +59,7 @@ namespace Telemetry
         String requestBody;
         serializeJson(doc, requestBody);
 
-        Serial.println(requestBody);
+        //Serial.println(requestBody);
 
         int httpResponseCode = http.POST(requestBody);
 

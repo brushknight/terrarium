@@ -4,30 +4,34 @@
 namespace Net
 {
 
-    void connect(){
+    void connect()
+    {
 
         WiFi.mode(WIFI_STA);
         WiFi.disconnect();
         delay(100);
 
-        WiFi.setHostname("Terr Controller");
+        WiFi.setHostname("Terrarium Controller v2.0");
 
-        int status = WL_IDLE_STATUS;     // the Wifi radio's status
+        int attempts = 0;
 
-        // attempt to connect to Wifi network:
-        while (status != WL_CONNECTED) {
-            Serial.print("Attempting to connect SSID: ");
-            Serial.println(WIFI_SSID);
-            Display::renderConnectingToWifi(WIFI_SSID);
-            status = WiFi.begin(WIFI_SSID, WIFI_PASS);
+        WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-            // wait 10 seconds for connection:
-            delay(10000);
+        while (!WiFi.isConnected())
+        {
+            attempts++;
+            Display::renderConnectingToWifi(WIFI_SSID, attempts);
+            delay(1 * 1000);
+            Serial.println(WiFi.status());
+            if (attempts >= 20)
+            {
+                attempts = 0;
+                WiFi.begin(WIFI_SSID, WIFI_PASS);
+            }
         }
 
         // you're connected now, so print out the data:
         Serial.print("You're connected to the network");
         Display::renderConnectedToWifi(WIFI_SSID);
-
     }
 }

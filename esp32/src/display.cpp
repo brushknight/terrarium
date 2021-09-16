@@ -8,19 +8,46 @@ namespace Display
 
     LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 
+    void renderHarvestInfo(int secondsToNextHarvest)
+    {
+        lcd.setCursor(9, 3);
+        lcd.print(secondsToNextHarvest);
+    }
+
     void renderClimate(Telemetry::TelemteryData telemteryData)
     {
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print(tempToString(telemteryData.hotSide.t));
-        lcd.print("|");
-        lcd.setCursor(5, 0);
-        lcd.print(tempToString(telemteryData.hotSide.t));
-        lcd.setCursor(11, 0);
-        lcd.print(tempToString(telemteryData.hotSide.t));
-        lcd.print("|");
+        lcd.print(floatToString(telemteryData.hotSide.t));
+
+        if (SENSORS_COUNT == 4)
+        {
+            lcd.print("|");
+            lcd.setCursor(5, 0);
+            lcd.print(floatToString(telemteryData.hotCenter.t));
+            lcd.setCursor(11, 0);
+            lcd.print(floatToString(telemteryData.coldCenter.t));
+            lcd.print("|");
+        }
+
         lcd.setCursor(16, 0);
-        lcd.print(tempToString(telemteryData.hotSide.t));
+        lcd.print(floatToString(telemteryData.coldSide.t));
+
+        lcd.setCursor(0, 1);
+        lcd.print(floatToString(telemteryData.hotSide.h));
+
+        if (SENSORS_COUNT == 4)
+        {
+            lcd.print("|");
+            lcd.setCursor(5, 1);
+            lcd.print(floatToString(telemteryData.hotCenter.h));
+            lcd.setCursor(11, 1);
+            lcd.print(floatToString(telemteryData.coldCenter.h));
+            lcd.print("|");
+        }
+        
+        lcd.setCursor(16, 1);
+        lcd.print(floatToString(telemteryData.coldSide.h));
 
         lcd.setCursor(0, 2);
         lcd.print("heater");
@@ -44,7 +71,7 @@ namespace Display
         }
     }
 
-    char *tempToString(double value)
+    char *floatToString(double value)
     {
         static char buffer[5];
         sprintf(buffer, "%.1f", value);
@@ -78,7 +105,8 @@ namespace Display
         }
     }
 
-    void renderNtp(int attempts){
+    void renderNtp(int attempts)
+    {
         lcd.clear();
         // set cursor to first column, first row
         lcd.setCursor(0, 0);

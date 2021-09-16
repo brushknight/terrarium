@@ -6,6 +6,7 @@
 #include <DHT_U.h>
 #include "telemetry.h"
 #include "climate_data.h"
+#include "config.h"
 
 namespace Climate
 {

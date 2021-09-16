@@ -2,6 +2,7 @@
 #define TERRARIUM_TELEMETRY
 
 #include "climate_data.h"
+#include "config.h"
 
 namespace Telemetry
 {

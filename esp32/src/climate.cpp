@@ -26,8 +26,8 @@ TODO: add 2 hour difference for UTC timezone
 
 #define DHT_HOT_SIDE_PIN 16   // #1
 #define DHT_HOT_CENTER_PIN 17 // #2
-#define DHT_COLD_CENTER_PIN 5 // #3
-#define DHT_COLD_SIDE_PIN 18  // #4
+#define DHT_COLD_CENTER_PIN 18 // #3
+#define DHT_COLD_SIDE_PIN 19  // #4
 
 #define DAY_MAX_TEMP 28.5
 #define DAY_TEMP_TOLERANCE_WARM 0.5
@@ -161,8 +161,15 @@ TODO: add 2 hour difference for UTC timezone
         }
 
         telemetryData.hotSide = hotSide;
-        telemetryData.hotCenter = hotCenter;
-        telemetryData.coldCenter = coldCenter;
+
+        if (SENSORS_COUNT == 2){
+            telemetryData.hotCenter = hotSide;
+            telemetryData.coldCenter = coldSide;
+        }else if(SENSORS_COUNT == 4){
+            telemetryData.hotCenter = hotCenter;
+            telemetryData.coldCenter = coldCenter;
+        }
+
         telemetryData.coldSide = coldSide;
         telemetryData.heaterPhase = heaterPhase;
 

@@ -11,6 +11,9 @@ uint32_t delayMS = 100;
 uint32_t lastSensorFetch = 0;
 uint32_t lastTimeRender = 0;
 
+#define HARVESTING_INTERVAL_SEC 5
+#define DISPLAY_REFRESH_INTERVAL 1
+
 void setup()
 {
   Serial.begin(115200);
@@ -33,17 +36,18 @@ void loop()
   int now = RealTime::getTimestamp();
   // turnLedOn(255,0,0);
 
-  if (now - lastSensorFetch > 15)
+  if (now - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
   {
     TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute());
     renderClimate(telemteryData);
     lastSensorFetch = now;
-    //send(telemteryData)
+    //send(telemteryData);
   }
 
-  if (now - lastTimeRender > 1)
+  if (now - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
   {
     renderTime(RealTime::getHour(), RealTime::getMinute(), RealTime::getSecond());
+    renderHarvestInfo(HARVESTING_INTERVAL_SEC - (now - lastSensorFetch));
     lastTimeRender = now;
   }
 }

@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <Arduino.h>
 #include "telemetry.h"
+#include "config.h"
 
 namespace Display
 {
@@ -13,6 +14,7 @@ namespace Display
      void renderNtp(int attempts);
      void renderConnectedToWifi(char* ssid);
      void renderTime(int hour, int minute, int second);
-     char * tempToString(double value);
+     void renderHarvestInfo(int secondsToNextHarvest);
+     char * floatToString(double value);
 }
 #endif

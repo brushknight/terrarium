@@ -81,7 +81,7 @@ TODO: add 2 hour difference for UTC timezone
 
     void turnRelayOn()
     {
-        relayState = LOW;
+        relayState = HIGH;
         heaterPhase = heating;
         digitalWrite(HEATER_RELAY_PIN, relayState);
         //Serial.println("turn relay on");
@@ -89,7 +89,7 @@ TODO: add 2 hour difference for UTC timezone
 
     void turnRelayOff()
     {
-        relayState = HIGH;
+        relayState = LOW;
         heaterPhase = cooling;
         digitalWrite(HEATER_RELAY_PIN, relayState);
         //Serial.println("turn relay off");

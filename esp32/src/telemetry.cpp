@@ -14,7 +14,6 @@ namespace Telemetry
 
         //const char*  TELEMETRY_ENDPOINT = "http://terrarium.lab/api/v1/telemetry";
 
-
         HTTPClient http;
 
         http.begin(telemetryEndpoint);
@@ -72,11 +71,13 @@ namespace Telemetry
 
             // Serial.println(httpResponseCode);
             // Serial.println(response);
+            return;
         }
         else
         {
 
             Serial.printf("Error occurred while sending HTTP POST");
+            return;
         }
     }
 }

@@ -8,13 +8,17 @@
 
 namespace Display
 {
+
      void displaySetup();
      void renderClimate(Telemetry::TelemteryData telemteryData);
      void renderConnectingToWifi(char *ssid, int attempts);
      void renderNtp(int attempts);
-     void renderConnectedToWifi(char* ssid);
+     void renderInfo(int id);
+     void renderConnectedToWifi(char *ssid);
      void renderTime(int hour, int minute, int second);
      void renderHarvestInfo(int secondsToNextHarvest);
-     char * floatToString(double value);
+     char *floatToString(double value);
+     void clearRow(int row);
+
 }
 #endif

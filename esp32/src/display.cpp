@@ -14,9 +14,27 @@ namespace Display
         lcd.print(secondsToNextHarvest);
     }
 
+    void renderInfo(int id)
+    {
+        lcd.setCursor(4, 3);
+        lcd.print("ID");
+        lcd.setCursor(6, 3);
+        lcd.print(id);
+    }
+
+    void clearRow(int row)
+    {
+        lcd.setCursor(0, row);
+        for (int i = 0; i < 20; i++)
+        {
+            lcd.print(" ");
+        }
+    }
+
     void renderClimate(Telemetry::TelemteryData telemteryData)
     {
-        lcd.clear();
+        clearRow(0);
+        clearRow(1);
         lcd.setCursor(0, 0);
         lcd.print(floatToString(telemteryData.hotSide.t));
 
@@ -45,7 +63,7 @@ namespace Display
             lcd.print(floatToString(telemteryData.coldCenter.h));
             lcd.print("|");
         }
-        
+
         lcd.setCursor(16, 1);
         lcd.print(floatToString(telemteryData.coldSide.h));
 

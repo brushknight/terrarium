@@ -4,20 +4,22 @@ using namespace Climate;
 using namespace Lighting;
 using namespace Security;
 using namespace Net;
-using namespace Telemetry;
-using namespace Display;
 
 uint32_t delayMS = 100;
 uint32_t lastSensorFetch = 0;
 uint32_t lastTimeRender = 0;
+uint32_t lastTimeReinit = 0;
+uint32_t lastSendingTime = 0;
 
 #define HARVESTING_INTERVAL_SEC 5
+#define SENDING_INTERVAL_SEC 30
 #define DISPLAY_REFRESH_INTERVAL 1
+#define DISPLAY_REINIT_INTERVAL 30
 
 void setup()
 {
   Serial.begin(115200);
-  displaySetup();
+  Display::displaySetup();
 
   connect();
   RealTime::setupRtcModule();
@@ -31,68 +33,37 @@ void setup()
 
 void loop()
 {
+
   Encoder::tick();
   //Encoder::isTurn();
   int now = RealTime::getTimestamp();
   // turnLedOn(255,0,0);
 
-  if (now - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
+  if (now - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
   {
-    TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute());
-    renderClimate(telemteryData);
-    lastSensorFetch = now;
-    //send(telemteryData);
+    Display::displaySetup();
+    lastTimeReinit = now;
   }
 
   if (now - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
   {
-    renderTime(RealTime::getHour(), RealTime::getMinute(), RealTime::getSecond());
-    renderHarvestInfo(HARVESTING_INTERVAL_SEC - (now - lastSensorFetch));
+    Display::renderTime(RealTime::getHour(), RealTime::getMinute(), RealTime::getSecond());
+    Display::renderHarvestInfo(HARVESTING_INTERVAL_SEC - (now - lastSensorFetch));
+    Display::renderInfo(TERRARIUM_ID);
     lastTimeRender = now;
   }
-}
 
-/*
-#include <Wire.h>
-#include <Arduino.h>
- 
-void setup() {
-  Wire.begin();
-  Serial.begin(115200);
-  Serial.println("\nI2C Scanner");
-}
- 
-void loop() {
-  byte error, address;
-  int nDevices;
-  Serial.println("Scanning...");
-  nDevices = 0;
-  for(address = 1; address < 127; address++ ) {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-    if (error == 0) {
-      Serial.print("I2C device found at address 0x");
-      if (address<16) {
-        Serial.print("0");
-      }
-      Serial.println(address,HEX);
-      nDevices++;
-    }
-    else if (error==4) {
-      Serial.print("Unknow error at address 0x");
-      if (address<16) {
-        Serial.print("0");
-      }
-      Serial.println(address,HEX);
-    }    
-  }
-  if (nDevices == 0) {
-    Serial.println("No I2C devices found\n");
-  }
-  else {
-    Serial.println("done\n");
-  }
-  delay(5000);          
-}
+  if (now - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
+  {
+    Telemetry::TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute());
+    Display::renderClimate(telemteryData);
+    lastSensorFetch = now;
 
-*/
+    /*if (now - lastSendingTime >= SENDING_INTERVAL_SEC)
+    {
+      renderSendTelemetry();
+      Telemetry::send(telemteryData);
+      lastSendingTime = now;
+    }*/
+  }
+}

@@ -113,7 +113,7 @@ func main() {
 	muxRouter.HandleFunc("/api/v2/telemetry/{id}", recordTelemetry).Methods("POST")
 	muxRouter.HandleFunc("/api/v2/telemetry", printTelemetry).Methods("GET")
 
-	err := http.ListenAndServe(":8060", muxRouter)
+	err := http.ListenAndServe(":80", muxRouter)
 
 	if err != nil{
 		panic(err)

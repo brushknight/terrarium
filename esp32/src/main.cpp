@@ -21,9 +21,11 @@ Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
 void submitTelemetry(void * parameter){
   for(;;){ // infinite loop
 
+    Serial.println("submission started");
     displayData.submission = true;
     Telemetry::send(gTelemteryData);
     displayData.submission = false;
+    Serial.println("submission finished");
 
 
     // Pause the task again for 500ms

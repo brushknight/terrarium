@@ -98,6 +98,7 @@ func recordTelemetry(w http.ResponseWriter, req *http.Request) {
 }
 
 func printTelemetry(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(storage)
 }
 

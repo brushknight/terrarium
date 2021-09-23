@@ -14,17 +14,20 @@ Display::DisplayData displayData = Display::DisplayData();
 Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
 
 #define HARVESTING_INTERVAL_SEC 5
-#define SENDING_INTERVAL_SEC 30
+#define SUBMISSION_INTERVAL_SEC 30
 #define DISPLAY_REFRESH_INTERVAL 1
 #define DISPLAY_REINIT_INTERVAL 60 * 3
 
-void sendTelemetry(void * parameter){
+void submitTelemetry(void * parameter){
   for(;;){ // infinite loop
 
+    displayData.submission = true;
     Telemetry::send(gTelemteryData);
+    displayData.submission = false;
+
 
     // Pause the task again for 500ms
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 * SUBMISSION_INTERVAL_SEC / portTICK_PERIOD_MS);
   }
 }
 
@@ -43,9 +46,9 @@ void setup()
   //Encoder::setup();
 
   xTaskCreate(
-    sendTelemetry,    // Function that should be called
-    "sendTelemetry",   // Name of the task (for debugging)
-    1000,            // Stack size (bytes)
+    submitTelemetry,    // Function that should be called
+    "submitTelemetry",   // Name of the task (for debugging)
+    1024 * 10 ,            // Stack size (bytes)
     NULL,            // Parameter to pass
     1,               // Task priority
     NULL             // Task handle

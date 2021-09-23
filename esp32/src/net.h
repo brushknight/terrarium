@@ -7,7 +7,7 @@
 
 namespace Net
 {
-    void connect();
+     void connect(bool interactive);
 }
 
 #endif

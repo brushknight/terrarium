@@ -20,7 +20,19 @@ namespace Display
         renderClimate(displayData);
         renderTime(displayData.hour, displayData.minute, displayData.second);
         renderInfo(displayData.terrId);
+        renderSubmissionInfo(displayData.submission);
     }
+
+void renderSubmissionInfo(bool submission)
+{
+        lcd.setCursor(9, 2);
+        lcd.print(" ");
+        lcd.print(" ");
+        if (submission){
+            lcd.setCursor(9, 2);
+            lcd.print("S");
+        }
+}
 
     void renderHarvestInfo(int secondsToNextHarvest)
     {

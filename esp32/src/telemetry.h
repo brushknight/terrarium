@@ -3,6 +3,7 @@
 
 #include "climate_data.h"
 #include "config.h"
+#include "net.h"
 
 namespace Telemetry
 {

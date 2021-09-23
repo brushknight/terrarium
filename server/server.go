@@ -41,11 +41,11 @@ var errResponse struct {
 }
 
 type Storage struct {
-	Data      map[int]Data `json:"data"`
+	Data      Data `json:"data"`
 	Timestamp int64        `json:"timestamp"`
 }
 
-var storage Storage
+var storage map[int]Storage
 
 var debug = true
 
@@ -89,8 +89,10 @@ func recordTelemetry(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	storage.Data[id] = telemetry
-	storage.Timestamp = time.Now().Unix()
+	storage[id] = Storage{
+		Data: telemetry,
+		Timestamp: time.Now().Unix(),
+	}
 
 	fmt.Fprintf(w, "ok\n")
 }
@@ -101,9 +103,7 @@ func printTelemetry(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 
-	storage = Storage{
-		Data: map[int]Data{},
-	}
+	storage = make(map[int]Storage)
 
 	muxRouter := mux.NewRouter()
 
@@ -113,7 +113,7 @@ func main() {
 	muxRouter.HandleFunc("/api/v2/telemetry/{id}", recordTelemetry).Methods("POST")
 	muxRouter.HandleFunc("/api/v2/telemetry", printTelemetry).Methods("GET")
 
-	err := http.ListenAndServe(":80", muxRouter)
+	err := http.ListenAndServe(":8060", muxRouter)
 
 	if err != nil{
 		panic(err)

@@ -52,7 +52,7 @@ namespace RealTime
 
     void syncTime()
     {
-        Net::connect();
+        Net::connect(true);
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2, ntpServer3);
     }
 

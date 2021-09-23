@@ -8,8 +8,10 @@ namespace Telemetry
     void send(TelemteryData telemteryData)
     {
 
+        Net::connect(false);
+
         char telemetryEndpoint [200];
-        sprintf (telemetryEndpoint, "http://terrarium.lab/api/v1/telemetry/%d", TERRARIUM_ID);
+        sprintf (telemetryEndpoint, "http://terrarium.lab/api/v2/telemetry/%d", TERRARIUM_ID);
         Serial.print(telemetryEndpoint);
 
         //const char*  TELEMETRY_ENDPOINT = "http://terrarium.lab/api/v1/telemetry";

@@ -2,10 +2,10 @@
 #  --request POST
 #  --data '{"p1_consumed":12345,"p2_consumed":1234}'
 # http://127.0.0.1:8001/api/v1/items
-POST http://localhost:8090/api/v1/telemetry
+POST http://localhost:8060/api/v1/telemetry
 Content-Type: application/json
 
 {"cold_side":{"T":  26.6, "H":  65.5}}
 
 ###
-GET http://localhost:8090/api/v1/telemetry
+GET http://localhost:8060/api/v1/telemetry

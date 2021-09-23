@@ -11,11 +11,22 @@ uint32_t lastTimeRender = 0;
 uint32_t lastTimeReinit = 0;
 uint32_t lastSendingTime = 0;
 Display::DisplayData displayData = Display::DisplayData();
+Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
 
 #define HARVESTING_INTERVAL_SEC 5
 #define SENDING_INTERVAL_SEC 30
 #define DISPLAY_REFRESH_INTERVAL 1
 #define DISPLAY_REINIT_INTERVAL 60 * 3
+
+void sendTelemetry(void * parameter){
+  for(;;){ // infinite loop
+
+    Telemetry::send(gTelemteryData);
+
+    // Pause the task again for 500ms
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }
+}
 
 void setup()
 {
@@ -30,6 +41,16 @@ void setup()
   //ledSetup();
 
   //Encoder::setup();
+
+  xTaskCreate(
+    sendTelemetry,    // Function that should be called
+    "sendTelemetry",   // Name of the task (for debugging)
+    1000,            // Stack size (bytes)
+    NULL,            // Parameter to pass
+    1,               // Task priority
+    NULL             // Task handle
+  );
+
 }
 
 void loop()
@@ -49,6 +70,7 @@ void loop()
   if (now - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
   {
     Telemetry::TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute(), now);
+    gTelemteryData = telemteryData;
     lastSensorFetch = now;
 
     displayData.hotSide = telemteryData.hotSide;
@@ -79,3 +101,4 @@ void loop()
     lastTimeRender = now;
   }
 }
+

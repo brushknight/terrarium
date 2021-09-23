@@ -97,7 +97,6 @@ namespace Display
         lcd.print(" ");
         lcd.print(" ");
         lcd.setCursor(0, 3);
-        Serial.println(displayData.heater);
         if (displayData.heater)
         {
             lcd.print("ON");

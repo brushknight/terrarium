@@ -22,14 +22,14 @@ void setup()
   Serial.begin(115200);
   Display::displaySetup();
 
-  connect();
+  //connect();
   RealTime::setupRtcModule();
 
   //securitySetup();
   climateSetup();
   //ledSetup();
 
-  Encoder::setup();
+  //Encoder::setup();
 }
 
 void loop()

@@ -7,11 +7,10 @@ namespace Climate
 
 TODO: add 2 hour difference for UTC timezone
 
-08 - 20 hot max 29.5
-20 - 8 hot max 25
+time in UTC
 
-// temp tolerance ~ 1.5C - to be measured and tuned
- 
+06 - 18 hot max 29.5
+18 - 6 hot max 25 
 
 */
 
@@ -24,10 +23,10 @@ TODO: add 2 hour difference for UTC timezone
 #define DHTTYPE DHT22
 #define HEATER_RELAY_PIN 4
 
-#define DHT_HOT_SIDE_PIN 16   // #1
-#define DHT_HOT_CENTER_PIN 17 // #2
+#define DHT_HOT_SIDE_PIN 16    // #1
+#define DHT_HOT_CENTER_PIN 17  // #2
 #define DHT_COLD_CENTER_PIN 18 // #3
-#define DHT_COLD_SIDE_PIN 19  // #4
+#define DHT_COLD_SIDE_PIN 19   // #4
 
 #define DAY_MAX_TEMP 28.5
 #define DAY_TEMP_TOLERANCE_WARM 0.5
@@ -88,7 +87,7 @@ TODO: add 2 hour difference for UTC timezone
         relayState = HIGH;
         heaterPhase = heating;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        Serial.println("turn relay on");
+        //Serial.println("turn relay on");
     }
 
     void turnRelayOff()
@@ -96,7 +95,7 @@ TODO: add 2 hour difference for UTC timezone
         relayState = LOW;
         heaterPhase = cooling;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        Serial.println("turn relay off");
+        //Serial.println("turn relay off");
     }
 
     void climateSetup()
@@ -126,11 +125,13 @@ TODO: add 2 hour difference for UTC timezone
         // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
 
-        if (hotSide.t > 0 || hotCenter.t > 0){
+        if (hotSide.t > 0 || hotCenter.t > 0)
+        {
             lastNotNullReadings = now;
         }
 
-        if (lastNotNullReadings != 0 && now - lastNotNullReadings > MAX_NULL_READINGS_SEC){
+        if (lastNotNullReadings != 0 && now - lastNotNullReadings > MAX_NULL_READINGS_SEC)
+        {
             ESP.restart();
         }
 
@@ -174,10 +175,13 @@ TODO: add 2 hour difference for UTC timezone
 
         telemetryData.hotSide = hotSide;
 
-        if (SENSORS_COUNT == 2){
+        if (SENSORS_COUNT == 2)
+        {
             telemetryData.hotCenter = hotSide;
             telemetryData.coldCenter = coldSide;
-        }else if(SENSORS_COUNT == 4){
+        }
+        else if (SENSORS_COUNT == 4)
+        {
             telemetryData.hotCenter = hotCenter;
             telemetryData.coldCenter = coldCenter;
         }

@@ -5,6 +5,7 @@
 #include "Arduino.h"
 #include <RTClib.h>
 #include "display.h"
+#include "net.h"
 
 namespace RealTime{
     void syncTime();

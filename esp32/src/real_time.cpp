@@ -22,6 +22,9 @@ namespace RealTime
 
         if (rtc.lostPower())
         {
+
+            Display::renderNtp(0);
+
             Serial.println("RTC: lost power");
             syncTime();
 
@@ -42,13 +45,14 @@ namespace RealTime
             rtc.adjust(mktime(&timeinfo));
         }
 
-        printLocalTime();
-        Serial.println("RTC: now");
-        Serial.println(rtc.now().hour());
+        //printLocalTime();
+        //Serial.println("RTC: now");
+        //Serial.println(rtc.now().hour());
     }
 
     void syncTime()
     {
+        Net::connect();
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2, ntpServer3);
     }
 

@@ -7,11 +7,18 @@ namespace Net
     void connect()
     {
 
+        if (WiFi.isConnected()){
+            return;
+        }
+
         WiFi.mode(WIFI_STA);
         WiFi.disconnect();
         delay(100);
 
-        WiFi.setHostname("Terrarium Controller v2.0");
+        char buffer[100];
+        sprintf(buffer, "%s#%d", "Terrarium controller ID", TERRARIUM_ID);
+
+        WiFi.setHostname(buffer);
 
         int attempts = 0;
 

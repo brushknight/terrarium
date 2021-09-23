@@ -10,11 +10,12 @@ uint32_t lastSensorFetch = 0;
 uint32_t lastTimeRender = 0;
 uint32_t lastTimeReinit = 0;
 uint32_t lastSendingTime = 0;
+Display::DisplayData displayData = Display::DisplayData();
 
 #define HARVESTING_INTERVAL_SEC 5
 #define SENDING_INTERVAL_SEC 30
 #define DISPLAY_REFRESH_INTERVAL 1
-#define DISPLAY_REINIT_INTERVAL 30
+#define DISPLAY_REINIT_INTERVAL 60 * 3
 
 void setup()
 {
@@ -33,10 +34,10 @@ void setup()
 
 void loop()
 {
+  int now = RealTime::getTimestamp();  
 
-  Encoder::tick();
+  //Encoder::tick();
   //Encoder::isTurn();
-  int now = RealTime::getTimestamp();
   // turnLedOn(255,0,0);
 
   if (now - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
@@ -45,19 +46,17 @@ void loop()
     lastTimeReinit = now;
   }
 
-  if (now - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
-  {
-    Display::renderTime(RealTime::getHour(), RealTime::getMinute(), RealTime::getSecond());
-    Display::renderHarvestInfo(HARVESTING_INTERVAL_SEC - (now - lastSensorFetch));
-    Display::renderInfo(TERRARIUM_ID);
-    lastTimeRender = now;
-  }
-
   if (now - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
   {
-    Telemetry::TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute());
-    Display::renderClimate(telemteryData);
+    Telemetry::TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute(), now);
     lastSensorFetch = now;
+
+    displayData.hotSide = telemteryData.hotSide;
+    displayData.hotCenter = telemteryData.hotCenter;
+    displayData.coldCenter = telemteryData.coldCenter;
+    displayData.coldSide = telemteryData.coldSide;
+    displayData.heater = telemteryData.heater;
+    displayData.heaterPhase = telemteryData.heaterPhase;
 
     /*if (now - lastSendingTime >= SENDING_INTERVAL_SEC)
     {
@@ -65,5 +64,18 @@ void loop()
       Telemetry::send(telemteryData);
       lastSendingTime = now;
     }*/
+  }
+
+  displayData.nextHarvestInSec = HARVESTING_INTERVAL_SEC - (now - lastSensorFetch);
+
+  displayData.terrId = TERRARIUM_ID;
+  displayData.hour = RealTime::getHour();
+  displayData.minute = RealTime::getMinute();
+  displayData.second = RealTime::getSecond();
+
+  if (now - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
+  {
+    Display::render(displayData);
+    lastTimeRender = now;
   }
 }

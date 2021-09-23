@@ -9,8 +9,24 @@
 namespace Display
 {
 
+    class DisplayData
+    {
+    public:
+        Climate::ClimateData hotSide;
+        Climate::ClimateData hotCenter;
+        Climate::ClimateData coldCenter;
+        Climate::ClimateData coldSide;
+        bool heater;
+        Climate::HeaterPhase heaterPhase;
+        int hour;
+        int minute;
+        int second;
+        int nextHarvestInSec;
+        int terrId;
+    };
+
      void displaySetup();
-     void renderClimate(Telemetry::TelemteryData telemteryData);
+     void renderClimate(DisplayData displayData);
      void renderConnectingToWifi(char *ssid, int attempts);
      void renderNtp(int attempts);
      void renderInfo(int id);
@@ -19,6 +35,7 @@ namespace Display
      void renderHarvestInfo(int secondsToNextHarvest);
      char *floatToString(double value);
      void clearRow(int row);
+     void render(DisplayData displayData);
 
 }
 #endif

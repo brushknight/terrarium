@@ -8,14 +8,37 @@ namespace Display
 
     LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 
+    void render(DisplayData displayData)
+    {
+        // just do clear?
+ //       clearRow(0);
+ //       clearRow(1);
+ //       clearRow(2);
+ //       clearRow(3);
+
+        renderHarvestInfo(displayData.nextHarvestInSec);
+        renderClimate(displayData);
+        renderTime(displayData.hour, displayData.minute, displayData.second);
+        renderInfo(displayData.terrId);
+    }
+
     void renderHarvestInfo(int secondsToNextHarvest)
     {
+        lcd.setCursor(9, 3);
+        lcd.print(" ");
+        lcd.print(" ");
+        lcd.print(" ");
         lcd.setCursor(9, 3);
         lcd.print(secondsToNextHarvest);
     }
 
     void renderInfo(int id)
     {
+        lcd.setCursor(4, 3);
+        lcd.print(" ");
+        lcd.print(" ");
+        lcd.print(" ");
+        lcd.print(" ");
         lcd.setCursor(4, 3);
         lcd.print("ID");
         lcd.setCursor(6, 3);
@@ -31,46 +54,51 @@ namespace Display
         }
     }
 
-    void renderClimate(Telemetry::TelemteryData telemteryData)
+    void renderClimate(DisplayData displayData)
     {
         clearRow(0);
         clearRow(1);
         lcd.setCursor(0, 0);
-        lcd.print(floatToString(telemteryData.hotSide.t));
+        lcd.print(floatToString(displayData.hotSide.t));
 
         if (SENSORS_COUNT == 4)
         {
             lcd.print("|");
             lcd.setCursor(5, 0);
-            lcd.print(floatToString(telemteryData.hotCenter.t));
+            lcd.print(floatToString(displayData.hotCenter.t));
             lcd.setCursor(11, 0);
-            lcd.print(floatToString(telemteryData.coldCenter.t));
+            lcd.print(floatToString(displayData.coldCenter.t));
             lcd.print("|");
         }
 
         lcd.setCursor(16, 0);
-        lcd.print(floatToString(telemteryData.coldSide.t));
+        lcd.print(floatToString(displayData.coldSide.t));
 
         lcd.setCursor(0, 1);
-        lcd.print(floatToString(telemteryData.hotSide.h));
+        lcd.print(floatToString(displayData.hotSide.h));
 
         if (SENSORS_COUNT == 4)
         {
             lcd.print("|");
             lcd.setCursor(5, 1);
-            lcd.print(floatToString(telemteryData.hotCenter.h));
+            lcd.print(floatToString(displayData.hotCenter.h));
             lcd.setCursor(11, 1);
-            lcd.print(floatToString(telemteryData.coldCenter.h));
+            lcd.print(floatToString(displayData.coldCenter.h));
             lcd.print("|");
         }
 
         lcd.setCursor(16, 1);
-        lcd.print(floatToString(telemteryData.coldSide.h));
+        lcd.print(floatToString(displayData.coldSide.h));
 
         lcd.setCursor(0, 2);
         lcd.print("heater");
         lcd.setCursor(0, 3);
-        if (telemteryData.heater)
+        lcd.print(" ");
+        lcd.print(" ");
+        lcd.print(" ");
+        lcd.setCursor(0, 3);
+        Serial.println(displayData.heater);
+        if (displayData.heater)
         {
             lcd.print("ON");
         }
@@ -79,7 +107,7 @@ namespace Display
             lcd.print("OFF");
         }
         lcd.setCursor(13, 2);
-        if (telemteryData.heaterPhase == Climate::HeaterPhase::cooling)
+        if (displayData.heaterPhase == Climate::HeaterPhase::cooling)
         {
             lcd.print("cooling");
         }

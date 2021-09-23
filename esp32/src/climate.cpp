@@ -15,10 +15,10 @@ TODO: add 2 hour difference for UTC timezone
 
 */
 
-#define DAY_START_HOUR 8
+#define DAY_START_HOUR 6
 #define DAY_START_MINUTE 0
 
-#define NIGHT_START_HOUR 20
+#define NIGHT_START_HOUR 18
 #define NIGHT_START_MINUTE 0
 
 #define DHTTYPE DHT22
@@ -35,6 +35,10 @@ TODO: add 2 hour difference for UTC timezone
 #define NIGHT_MAX_TEMP 23
 #define NIGHT_TEMP_TOLERANCE_WARM 0.5
 #define NIGHT_TEMP_TOLERANCE_COLD 0.6
+
+#define MAX_NULL_READINGS_SEC 30
+
+    int lastNotNullReadings = 0;
 
     DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
     DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
@@ -84,7 +88,7 @@ TODO: add 2 hour difference for UTC timezone
         relayState = HIGH;
         heaterPhase = heating;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        //Serial.println("turn relay on");
+        Serial.println("turn relay on");
     }
 
     void turnRelayOff()
@@ -92,7 +96,7 @@ TODO: add 2 hour difference for UTC timezone
         relayState = LOW;
         heaterPhase = cooling;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        //Serial.println("turn relay off");
+        Serial.println("turn relay off");
     }
 
     void climateSetup()
@@ -105,7 +109,7 @@ TODO: add 2 hour difference for UTC timezone
         dhtColdSide.begin();
     }
 
-    Telemetry::TelemteryData climateControl(int hour, int minute)
+    Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t now)
     {
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
@@ -121,6 +125,14 @@ TODO: add 2 hour difference for UTC timezone
         ClimateData coldCenter = readTempHumid(dhtColdCenter);
         // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
+
+        if (hotSide.t > 0 || hotCenter.t > 0){
+            lastNotNullReadings = now;
+        }
+
+        if (lastNotNullReadings != 0 && now - lastNotNullReadings > MAX_NULL_READINGS_SEC){
+            ESP.restart();
+        }
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
 

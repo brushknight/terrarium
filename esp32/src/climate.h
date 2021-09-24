@@ -6,6 +6,7 @@
 #include <DHT_U.h>
 #include "telemetry.h"
 #include "climate_data.h"
+#include "config.h"
 
 namespace Climate
 {
@@ -14,7 +15,7 @@ namespace Climate
     ClimateData readTempHumid(DHT_Unified dht);
     void turnRelayOn();
     void turnRelayOff();
-    Telemetry::TelemteryData climateControl(int hour, int minute);
+    Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t now);
 }
 
 #endif

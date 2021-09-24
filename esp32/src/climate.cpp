@@ -5,27 +5,28 @@ namespace Climate
 
     /* schedule
 
-08 - 20 hot max 29.5
-20 - 8 hot max 25
+TODO: add 2 hour difference for UTC timezone
 
-// temp tolerance ~ 1.5C - to be measured and tuned
- 
+time in UTC
+
+06 - 18 hot max 29.5
+18 - 6 hot max 25 
 
 */
 
-#define DAY_START_HOUR 8
+#define DAY_START_HOUR 6
 #define DAY_START_MINUTE 0
 
-#define NIGHT_START_HOUR 20
+#define NIGHT_START_HOUR 18
 #define NIGHT_START_MINUTE 0
 
 #define DHTTYPE DHT22
 #define HEATER_RELAY_PIN 4
 
-#define DHT_HOT_SIDE_PIN 16   // #1
-#define DHT_HOT_CENTER_PIN 17 // #2
-#define DHT_COLD_CENTER_PIN 5 // #3
-#define DHT_COLD_SIDE_PIN 18  // #4
+#define DHT_HOT_SIDE_PIN 16    // #1
+#define DHT_HOT_CENTER_PIN 17  // #2
+#define DHT_COLD_CENTER_PIN 18 // #3
+#define DHT_COLD_SIDE_PIN 19   // #4
 
 #define DAY_MAX_TEMP 28.5
 #define DAY_TEMP_TOLERANCE_WARM 0.5
@@ -34,13 +35,16 @@ namespace Climate
 #define NIGHT_TEMP_TOLERANCE_WARM 0.5
 #define NIGHT_TEMP_TOLERANCE_COLD 0.6
 
+#define MAX_NULL_READINGS_SEC 30
+
+    int lastNotNullReadings = 0;
+
     DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
     DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
     DHT_Unified dhtColdCenter(DHT_COLD_CENTER_PIN, DHTTYPE);
     DHT_Unified dhtColdSide(DHT_COLD_SIDE_PIN, DHTTYPE);
 
     volatile byte relayState = LOW;
-
 
     HeaterPhase heaterPhase;
 
@@ -80,18 +84,18 @@ namespace Climate
 
     void turnRelayOn()
     {
-        relayState = LOW;
+        relayState = HIGH;
         heaterPhase = heating;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        Serial.println("turn relay on");
+        //Serial.println("turn relay on");
     }
 
     void turnRelayOff()
     {
-        relayState = HIGH;
+        relayState = LOW;
         heaterPhase = cooling;
         digitalWrite(HEATER_RELAY_PIN, relayState);
-        Serial.println("turn relay off");
+        //Serial.println("turn relay off");
     }
 
     void climateSetup()
@@ -104,7 +108,7 @@ namespace Climate
         dhtColdSide.begin();
     }
 
-    Telemetry::TelemteryData climateControl(int hour, int minute)
+    Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t now)
     {
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
@@ -120,6 +124,16 @@ namespace Climate
         ClimateData coldCenter = readTempHumid(dhtColdCenter);
         // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
+
+        if (hotSide.t > 0 || hotCenter.t > 0)
+        {
+            lastNotNullReadings = now;
+        }
+
+        if (lastNotNullReadings != 0 && now - lastNotNullReadings > MAX_NULL_READINGS_SEC)
+        {
+            ESP.restart();
+        }
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
 
@@ -160,8 +174,18 @@ namespace Climate
         }
 
         telemetryData.hotSide = hotSide;
-        telemetryData.hotCenter = hotCenter;
-        telemetryData.coldCenter = coldCenter;
+
+        if (SENSORS_COUNT == 2)
+        {
+            telemetryData.hotCenter = hotSide;
+            telemetryData.coldCenter = coldSide;
+        }
+        else if (SENSORS_COUNT == 4)
+        {
+            telemetryData.hotCenter = hotCenter;
+            telemetryData.coldCenter = coldCenter;
+        }
+
         telemetryData.coldSide = coldSide;
         telemetryData.heaterPhase = heaterPhase;
 

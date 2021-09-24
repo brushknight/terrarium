@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -17,8 +18,8 @@ type ClimateData struct {
 }
 
 type ClimateConfig struct {
-	DayMaxTemp         float64 `json:"day_max_temp"`
-	NightMaxTemp       float64 `json:"night_max_temp"`
+	DayMaxTemp             float64 `json:"day_max_temp"`
+	NightMaxTemp           float64 `json:"night_max_temp"`
 	DayTempToleranceWarm   float64 `json:"day_temp_tolerance_warm"`
 	NightTempToleranceWarm float64 `json:"night_temp_tolerance_warm"`
 	DayTempToleranceCold   float64 `json:"day_temp_tolerance_cold"`
@@ -40,15 +41,29 @@ var errResponse struct {
 }
 
 type Storage struct {
-	Data      Data  `json:"data"`
-	Timestamp int64 `json:"timestamp"`
+	Data      Data `json:"data"`
+	Timestamp int64        `json:"timestamp"`
 }
 
-var storage Storage
+var storage map[int]Storage
 
 var debug = true
 
 func recordTelemetry(w http.ResponseWriter, req *http.Request) {
+
+	vars := mux.Vars(req)
+	listIdString := vars["id"]
+
+	if listIdString == "" {
+		listIdString = "0"
+	}
+
+	id, err := strconv.Atoi(listIdString)
+
+	if err != nil {
+		fmt.Println("error", err)
+		return
+	}
 
 	if debug {
 
@@ -66,7 +81,7 @@ func recordTelemetry(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var telemetry Data
-	err := json.NewDecoder(req.Body).Decode(&telemetry)
+	err = json.NewDecoder(req.Body).Decode(&telemetry)
 
 	if err != nil {
 		errResponse.Message = fmt.Sprintf("error on parsing payload, %v", err)
@@ -74,22 +89,34 @@ func recordTelemetry(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	storage.Data = telemetry
-	storage.Timestamp = time.Now().Unix()
+	storage[id] = Storage{
+		Data: telemetry,
+		Timestamp: time.Now().Unix(),
+	}
 
 	fmt.Fprintf(w, "ok\n")
 }
 
 func printTelemetry(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(storage)
 }
 
 func main() {
+
+	storage = make(map[int]Storage)
 
 	muxRouter := mux.NewRouter()
 
 	muxRouter.HandleFunc("/api/v1/telemetry", recordTelemetry).Methods("POST")
 	muxRouter.HandleFunc("/api/v1/telemetry", printTelemetry).Methods("GET")
 
-	http.ListenAndServe(":80", muxRouter)
+	muxRouter.HandleFunc("/api/v2/telemetry/{id}", recordTelemetry).Methods("POST")
+	muxRouter.HandleFunc("/api/v2/telemetry", printTelemetry).Methods("GET")
+
+	err := http.ListenAndServe(":80", muxRouter)
+
+	if err != nil{
+		panic(err)
+	}
 }

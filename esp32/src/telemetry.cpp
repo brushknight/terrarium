@@ -8,12 +8,17 @@ namespace Telemetry
     void send(TelemteryData telemteryData)
     {
 
-        const char*  TELEMETRY_ENDPOINT = "http://terrarium.lab/api/v1/telemetry";
+        Net::connect(false);
 
+        char telemetryEndpoint [200];
+        sprintf (telemetryEndpoint, "http://terrarium.lab/api/v2/telemetry/%d", TERRARIUM_ID);
+        Serial.print(telemetryEndpoint);
+
+        //const char*  TELEMETRY_ENDPOINT = "http://terrarium.lab/api/v1/telemetry";
 
         HTTPClient http;
 
-        http.begin(TELEMETRY_ENDPOINT);
+        http.begin(telemetryEndpoint);
         http.addHeader("Content-Type", "application/json");
 
         StaticJsonDocument<400> doc;
@@ -24,8 +29,6 @@ namespace Telemetry
         }else{
             doc["heater_phase"] = "heating";
         }
-        
-
 
         doc.createNestedObject("hot_side");
         doc["hot_side"]["H"] = telemteryData.hotSide.h;
@@ -59,7 +62,7 @@ namespace Telemetry
         String requestBody;
         serializeJson(doc, requestBody);
 
-        Serial.println(requestBody);
+        //Serial.println(requestBody);
 
         int httpResponseCode = http.POST(requestBody);
 
@@ -70,11 +73,13 @@ namespace Telemetry
 
             // Serial.println(httpResponseCode);
             // Serial.println(response);
+            return;
         }
         else
         {
 
             Serial.printf("Error occurred while sending HTTP POST");
+            return;
         }
     }
 }

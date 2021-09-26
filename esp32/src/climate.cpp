@@ -52,7 +52,6 @@ time in UTC
     {
         ClimateData data;
 
-        // Get temperature event and print its value.
         sensors_event_t event;
         dht.temperature().getEvent(&event);
         if (isnan(event.temperature))
@@ -195,6 +194,8 @@ time in UTC
         telemetryData.climateConfig.dayTempToleranceCold = DAY_TEMP_TOLERANCE_COLD;
         telemetryData.climateConfig.nightTempToleranceWarm = NIGHT_TEMP_TOLERANCE_WARM;
         telemetryData.climateConfig.nightTempToleranceCold = NIGHT_TEMP_TOLERANCE_COLD;
+
+        telemetryData.fullfilled = true;
 
         return telemetryData;
     }

@@ -38,6 +38,6 @@ namespace Display
      void clearRow(int row);
      void render(DisplayData displayData);
      void renderSubmissionInfo(bool submission);
-
+     void bootScreen();
 }
 #endif

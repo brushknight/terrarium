@@ -38,6 +38,8 @@ void setup()
   Serial.begin(115200);
   Display::displaySetup();
 
+  Display::bootScreen();
+
   //connect();
   RealTime::setupRtcModule();
 
@@ -55,6 +57,8 @@ void setup()
     1,               // Task priority
     NULL             // Task handle
   );
+
+  delay(1000);
 
 }
 

@@ -31,6 +31,7 @@ namespace Telemetry
         ClimateConfig climateConfig;
         bool heater;
         HeaterPhase heaterPhase;
+        bool fullfilled;
     };
 
     void send(TelemteryData telemteryData);

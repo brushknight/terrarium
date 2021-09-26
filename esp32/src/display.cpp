@@ -11,10 +11,10 @@ namespace Display
     void render(DisplayData displayData)
     {
         // just do clear?
- //       clearRow(0);
- //       clearRow(1);
- //       clearRow(2);
- //       clearRow(3);
+        //       clearRow(0);
+        //       clearRow(1);
+        //       clearRow(2);
+        //       clearRow(3);
 
         renderHarvestInfo(displayData.nextHarvestInSec);
         renderClimate(displayData);
@@ -23,16 +23,23 @@ namespace Display
         renderSubmissionInfo(displayData.submission);
     }
 
-void renderSubmissionInfo(bool submission)
-{
+    void bootScreen(){
+         lcd.setCursor(0, 0);
+         lcd.print("version: ");
+         lcd.print(VERSION);
+    }
+
+    void renderSubmissionInfo(bool submission)
+    {
         lcd.setCursor(9, 2);
         lcd.print(" ");
         lcd.print(" ");
-        if (submission){
+        if (submission)
+        {
             lcd.setCursor(9, 2);
             lcd.print("S");
         }
-}
+    }
 
     void renderHarvestInfo(int secondsToNextHarvest)
     {

@@ -8,6 +8,21 @@ namespace Telemetry
     void send(TelemteryData telemteryData)
     {
 
+        if (!telemteryData.fullfilled){
+            Serial.println("sample is not fullfilled yet.");
+            return;
+        }
+
+        if (telemteryData.hotSide.t == 0 || telemteryData.coldSide.t == 0){
+            Serial.println("sample is not fullfilled yet.");
+            return;
+        }
+
+        if (telemteryData.hotSide.h > 100 || telemteryData.hotCenter.h > 100 || telemteryData.coldCenter.h > 100 || telemteryData.coldSide.h > 100){
+            Serial.println("sample data has been corrupted (humidity > 100%).");
+            return;
+        }
+
         Net::connect(false);
 
         char telemetryEndpoint [200];

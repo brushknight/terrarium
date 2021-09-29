@@ -125,6 +125,9 @@ time in UTC
         // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
 
+        // debug
+        coldSide = readTempHumid(dhtHotSide);
+
         if ((hotSide.t > 0 || hotCenter.t > 0) && (coldCenter.t > 0 || coldSide.t > 0))
         {
             lastNotNullReadings = now;

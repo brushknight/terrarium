@@ -27,11 +27,11 @@ type ClimateConfig struct {
 }
 
 type System struct {
-	Version float64 `json:"version"`
-	Uptime  float64 `json:"uptime"`
-	Hour    float64 `json:"hour"`
-	Minute  float64 `json:"minute"`
-	Second  float64 `json:"second"`
+	Version string `json:"version"`
+	Uptime  int    `json:"uptime"`
+	Hour    int    `json:"hour"`
+	Minute  int    `json:"minute"`
+	Second  int    `json:"second"`
 }
 
 type Data struct {

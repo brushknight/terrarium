@@ -42,6 +42,7 @@ type Data struct {
 	Heater      bool          `json:"heater"`
 	Config      ClimateConfig `json:"climate_config"`
 	HeaterPhase string        `json:"heater_phase"`
+	System      System        `json:"system"`
 }
 
 var errResponse struct {
@@ -49,9 +50,8 @@ var errResponse struct {
 }
 
 type Storage struct {
-	Data      Data   `json:"data"`
-	Timestamp int64  `json:"timestamp"`
-	System    System `json:"system"`
+	Data      Data  `json:"data"`
+	Timestamp int64 `json:"timestamp"`
 }
 
 var storage map[int]Storage

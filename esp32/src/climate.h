@@ -11,7 +11,7 @@
 namespace Climate
 {
 
-    void climateSetup();
+    void climateSetup(uint32_t now);
     ClimateData readTempHumid(DHT_Unified dht);
     void turnRelayOn();
     void turnRelayOff();

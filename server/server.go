@@ -26,6 +26,14 @@ type ClimateConfig struct {
 	NightTempToleranceCold float64 `json:"night_temp_tolerance_cold"`
 }
 
+type System struct {
+	Version float64 `json:"version"`
+	Uptime  float64 `json:"uptime"`
+	Hour    float64 `json:"hour"`
+	Minute  float64 `json:"minute"`
+	Second  float64 `json:"second"`
+}
+
 type Data struct {
 	HotSide     ClimateData   `json:"hot_side"`
 	HotCenter   ClimateData   `json:"hot_center"`
@@ -41,8 +49,9 @@ var errResponse struct {
 }
 
 type Storage struct {
-	Data      Data `json:"data"`
-	Timestamp int64        `json:"timestamp"`
+	Data      Data   `json:"data"`
+	Timestamp int64  `json:"timestamp"`
+	System    System `json:"system"`
 }
 
 var storage map[int]Storage
@@ -90,7 +99,7 @@ func recordTelemetry(w http.ResponseWriter, req *http.Request) {
 	}
 
 	storage[id] = Storage{
-		Data: telemetry,
+		Data:      telemetry,
 		Timestamp: time.Now().Unix(),
 	}
 
@@ -116,7 +125,7 @@ func main() {
 
 	err := http.ListenAndServe(":80", muxRouter)
 
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 }

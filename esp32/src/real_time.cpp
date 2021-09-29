@@ -58,7 +58,15 @@ namespace RealTime
 
     int getHour()
     {
-        return int(rtc.now().hour());
+
+        int hour = int(rtc.now().hour());
+
+        if (hour > 23){
+            syncTime();
+            hour = int(rtc.now().hour());
+        }
+
+        return hour;
     }
 
     int getMinute()

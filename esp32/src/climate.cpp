@@ -97,7 +97,7 @@ time in UTC
         //Serial.println("turn relay off");
     }
 
-    void climateSetup()
+    void climateSetup(uint32_t now)
     {
         pinMode(HEATER_RELAY_PIN, OUTPUT);
         turnRelayOff();
@@ -105,6 +105,7 @@ time in UTC
         dhtHotCenter.begin();
         dhtColdCenter.begin();
         dhtColdSide.begin();
+        lastNotNullReadings = now;
     }
 
     Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t now)
@@ -124,10 +125,14 @@ time in UTC
         // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
 
-        if (hotSide.t > 0 || hotCenter.t > 0)
+        if ((hotSide.t > 0 || hotCenter.t > 0) && (coldCenter.t > 0 || coldSide.t > 0))
         {
             lastNotNullReadings = now;
         }
+
+        Serial.print("reboot in: ");
+        Serial.print(MAX_NULL_READINGS_SEC - (now - lastNotNullReadings));
+        Serial.println(" sec");
 
         if (lastNotNullReadings != 0 && now - lastNotNullReadings > MAX_NULL_READINGS_SEC)
         {

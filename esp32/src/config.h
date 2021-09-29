@@ -2,8 +2,8 @@
 #define CONFIG
 
 #define SENSORS_COUNT 2
-#define TERRARIUM_ID 1
+#define TERRARIUM_ID 10
 
-#define VERSION "v2.0.1"
+#define VERSION "v2.2.0"
 
 #endif

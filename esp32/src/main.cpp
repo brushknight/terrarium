@@ -43,8 +43,10 @@ void setup()
   //connect();
   RealTime::setupRtcModule();
 
+  int now = RealTime::getTimestamp();
+
   //securitySetup();
-  climateSetup();
+  climateSetup(now);
   //ledSetup();
 
   //Encoder::setup();
@@ -70,15 +72,24 @@ void loop()
   //Encoder::isTurn();
   // turnLedOn(255,0,0);
 
+  
+
   if (now - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
   {
     Display::displaySetup();
     lastTimeReinit = now;
+    
   }
 
   if (now - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
   {
     Telemetry::TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute(), now);
+    telemteryData.hour = RealTime::getHour();
+    telemteryData.minute = RealTime::getMinute();
+    telemteryData.second = RealTime::getSecond();
+    telemteryData.version = VERSION;
+    telemteryData.uptime = esp_timer_get_time() / 1000000;
+
     gTelemteryData = telemteryData;
     lastSensorFetch = now;
 

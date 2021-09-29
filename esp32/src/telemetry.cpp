@@ -72,8 +72,12 @@ namespace Telemetry
         doc["climate_config"]["night_temp_tolerance_warm"] = telemteryData.climateConfig.nightTempToleranceWarm;
         doc["climate_config"]["day_temp_tolerance_cold"] = telemteryData.climateConfig.dayTempToleranceCold;
         doc["climate_config"]["night_temp_tolerance_cold"] = telemteryData.climateConfig.nightTempToleranceCold;
-
-
+        doc.createNestedObject("system");
+        doc["system"]["version"] = telemteryData.version;
+        doc["system"]["uptime"] = telemteryData.uptime;
+        doc["system"]["hour"] = telemteryData.hour;
+        doc["system"]["minute"] = telemteryData.minute;
+        doc["system"]["second"] = telemteryData.second;
         String requestBody;
         serializeJson(doc, requestBody);
 

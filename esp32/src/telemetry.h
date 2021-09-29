@@ -32,6 +32,11 @@ namespace Telemetry
         bool heater;
         HeaterPhase heaterPhase;
         bool fullfilled;
+        char* version;
+        int uptime;
+        int hour;
+        int minute;
+        int second;
     };
 
     void send(TelemteryData telemteryData);

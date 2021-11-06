@@ -150,13 +150,13 @@ VCC
 Text GLabel 6500 1100 0    50   Input ~ 0
 VCC
 Text GLabel 4500 1200 0    50   Input ~ 0
-3v3
+VCC
 Text GLabel 3850 1200 0    50   Input ~ 0
-3v3
+VCC
 Text GLabel 3250 1200 0    50   Input ~ 0
-3v3
+VCC
 Text GLabel 2650 1200 0    50   Input ~ 0
-3v3
+VCC
 Text GLabel 1350 1950 0    50   Input ~ 0
 VCC
 Text GLabel 1350 1200 0    50   Input ~ 0
@@ -199,4 +199,55 @@ Text GLabel 5500 1200 0    50   Input ~ 0
 G4
 Text GLabel 6500 1200 0    50   Input ~ 0
 G5
+NoConn ~ 3000 2000
+NoConn ~ 3000 2100
+NoConn ~ 3000 2200
+NoConn ~ 3000 2300
+NoConn ~ 3000 2400
+NoConn ~ 3000 2500
+NoConn ~ 4500 2100
+NoConn ~ 4500 2200
+NoConn ~ 4500 2300
+NoConn ~ 4500 2400
+NoConn ~ 4500 2500
+NoConn ~ 4500 2600
+NoConn ~ 4500 2700
+NoConn ~ 4500 2800
+NoConn ~ 4500 2900
+NoConn ~ 4500 3000
+NoConn ~ 4500 3100
+NoConn ~ 4500 3200
+NoConn ~ 4500 3300
+NoConn ~ 4500 3400
+NoConn ~ 4500 3500
+NoConn ~ 4500 3600
+NoConn ~ 4500 3700
+NoConn ~ 3000 3700
+NoConn ~ 3000 3500
+NoConn ~ 3000 3400
+NoConn ~ 6700 1400
+NoConn ~ 5700 1400
+NoConn ~ 2850 1400
+NoConn ~ 3450 1400
+NoConn ~ 4050 1400
+NoConn ~ 4700 1400
+NoConn ~ 3200 4000
+NoConn ~ 4700 4000
+$Comp
+L Connector_Generic:Conn_01x03 ExternalPower1
+U 1 1 618715FE
+P 1550 2750
+F 0 "ExternalPower1" H 1630 2792 50  0000 L CNN
+F 1 "Conn_01x03" H 1630 2701 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1550 2750 50  0001 C CNN
+F 3 "~" H 1550 2750 50  0001 C CNN
+	1    1550 2750
+	1    0    0    -1  
+$EndComp
+Text GLabel 1350 2750 0    50   Input ~ 0
+GND
+Text GLabel 1350 2650 0    50   Input ~ 0
+VCC
+Text GLabel 1350 2850 0    50   Input ~ 0
+3V3
 $EndSCHEMATC

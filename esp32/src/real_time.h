@@ -15,6 +15,7 @@ namespace RealTime{
     int getSecond();
     void printLocalTime();
     uint32_t getTimestamp();
+    int getUptime();
 }
 
 #endif

@@ -11,6 +11,11 @@ namespace RealTime
 
     RTC_DS3231 rtc;
 
+    int getUptime()
+    {
+        return esp_timer_get_time() / 1000000;
+    }
+
     void setupRtcModule()
     {
         if (!rtc.begin())

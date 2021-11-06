@@ -97,7 +97,7 @@ time in UTC
         //Serial.println("turn relay off");
     }
 
-    void climateSetup(uint32_t now)
+    void climateSetup(uint32_t uptime)
     {
         pinMode(HEATER_RELAY_PIN, OUTPUT);
         turnRelayOff();
@@ -105,10 +105,10 @@ time in UTC
         dhtHotCenter.begin();
         dhtColdCenter.begin();
         dhtColdSide.begin();
-        lastNotNullReadings = now;
+        lastNotNullReadings = uptime;
     }
 
-    Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t now)
+    Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t uptime)
     {
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
@@ -125,24 +125,18 @@ time in UTC
         // Serial.println("4: cold side");
         ClimateData coldSide = readTempHumid(dhtColdSide);
 
-        if (DEBUG){
-            // debug
-            coldSide = readTempHumid(dhtHotSide);
-        }
-
-
         if ((hotSide.t > 0 || hotCenter.t > 0) && (coldCenter.t > 0 || coldSide.t > 0))
         {
-            lastNotNullReadings = now;
+            lastNotNullReadings = uptime;
         }
 
         Serial.print("reboot in: ");
-        Serial.print(MAX_NULL_READINGS_SEC - (now - lastNotNullReadings));
+        Serial.print(MAX_NULL_READINGS_SEC - (uptime - lastNotNullReadings));
         Serial.println(" sec");
 
-        if (lastNotNullReadings != 0 && now - lastNotNullReadings > MAX_NULL_READINGS_SEC)
+        if (lastNotNullReadings != 0 && uptime - lastNotNullReadings > MAX_NULL_READINGS_SEC)
         {
-            ESP.restart();
+            //ESP.restart();
         }
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();

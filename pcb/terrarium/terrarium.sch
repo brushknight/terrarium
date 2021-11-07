@@ -102,17 +102,6 @@ F 3 "~" H 1550 1200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x04 i2c2
-U 1 1 618742D4
-P 1550 1950
-F 0 "i2c2" H 1630 1942 50  0000 L CNN
-F 1 "LCD" H 1630 1851 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1550 1950 50  0001 C CNN
-F 3 "~" H 1550 1950 50  0001 C CNN
-	1    1550 1950
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector_Generic_MountingPin:Conn_01x03_MountingPin relay2
 U 1 1 6187A97E
 P 6700 1100
@@ -137,8 +126,6 @@ Text GLabel 2650 1000 0    50   Input ~ 0
 GND
 Text GLabel 1350 1100 0    50   Input ~ 0
 GND
-Text GLabel 1350 1850 0    50   Input ~ 0
-GND
 Text GLabel 3000 3800 0    50   Input ~ 0
 GND
 Text GLabel 4500 2000 0    50   Input ~ 0
@@ -157,17 +144,11 @@ Text GLabel 3250 1200 0    50   Input ~ 0
 VCC
 Text GLabel 2650 1200 0    50   Input ~ 0
 VCC
-Text GLabel 1350 1950 0    50   Input ~ 0
-VCC
 Text GLabel 1350 1200 0    50   Input ~ 0
 3v3
 Text GLabel 1350 1300 0    50   Input ~ 0
 SDA
 Text GLabel 1350 1400 0    50   Input ~ 0
-SCL
-Text GLabel 1350 2050 0    50   Input ~ 0
-SDA
-Text GLabel 1350 2150 0    50   Input ~ 0
 SCL
 Text GLabel 3000 3600 0    50   Input ~ 0
 SCL
@@ -223,8 +204,6 @@ NoConn ~ 4500 3500
 NoConn ~ 4500 3600
 NoConn ~ 4500 3700
 NoConn ~ 3000 3700
-NoConn ~ 3000 3500
-NoConn ~ 3000 3400
 NoConn ~ 6700 1400
 NoConn ~ 5700 1400
 NoConn ~ 2850 1400
@@ -250,4 +229,80 @@ Text GLabel 1350 2850 0    50   Input ~ 0
 VCC
 Text GLabel 1350 2750 0    50   Input ~ 0
 3v3
+$Comp
+L Connector_Generic:Conn_01x02 rxtx1
+U 1 1 6188472C
+P 1500 4050
+F 0 "rxtx1" H 1580 4042 50  0000 L CNN
+F 1 "Conn_01x02" H 1580 3951 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical" H 1500 4050 50  0001 C CNN
+F 3 "~" H 1500 4050 50  0001 C CNN
+	1    1500 4050
+	1    0    0    -1  
+$EndComp
+Text GLabel 1350 2150 0    50   Input ~ 0
+SCL
+Text GLabel 1350 2050 0    50   Input ~ 0
+SDA
+Text GLabel 1350 1950 0    50   Input ~ 0
+VCC
+Text GLabel 1350 1850 0    50   Input ~ 0
+GND
+$Comp
+L Connector_Generic:Conn_01x04 i2c2
+U 1 1 618742D4
+P 1550 1950
+F 0 "i2c2" H 1630 1942 50  0000 L CNN
+F 1 "LCD" H 1630 1851 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1550 1950 50  0001 C CNN
+F 3 "~" H 1550 1950 50  0001 C CNN
+	1    1550 1950
+	1    0    0    -1  
+$EndComp
+Text GLabel 1350 3600 0    50   Input ~ 0
+SCL
+Text GLabel 1350 3500 0    50   Input ~ 0
+SDA
+Text GLabel 1350 3400 0    50   Input ~ 0
+VCC
+Text GLabel 1350 3300 0    50   Input ~ 0
+GND
+$Comp
+L Connector_Generic:Conn_01x04 i2c3
+U 1 1 6188D551
+P 1550 3400
+F 0 "i2c3" H 1630 3392 50  0000 L CNN
+F 1 "Extra_5v" H 1630 3301 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1550 3400 50  0001 C CNN
+F 3 "~" H 1550 3400 50  0001 C CNN
+	1    1550 3400
+	1    0    0    -1  
+$EndComp
+Text GLabel 3000 3500 0    50   Input ~ 0
+TX
+Text GLabel 3000 3400 0    50   Input ~ 0
+RX
+Text GLabel 1300 4050 0    50   Input ~ 0
+RX
+Text GLabel 1300 4150 0    50   Input ~ 0
+TX
+Text GLabel 1350 4800 0    50   Input ~ 0
+SCL
+Text GLabel 1350 4700 0    50   Input ~ 0
+SDA
+Text GLabel 1350 4600 0    50   Input ~ 0
+3v3
+Text GLabel 1350 4500 0    50   Input ~ 0
+GND
+$Comp
+L Connector_Generic:Conn_01x04 i2c4
+U 1 1 6188A3D1
+P 1550 4600
+F 0 "i2c4" H 1630 4592 50  0000 L CNN
+F 1 "Extra_3v3" H 1630 4501 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1550 4600 50  0001 C CNN
+F 3 "~" H 1550 4600 50  0001 C CNN
+	1    1550 4600
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

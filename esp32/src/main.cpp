@@ -18,15 +18,16 @@ Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
 #define DISPLAY_REFRESH_INTERVAL 1
 #define DISPLAY_REINIT_INTERVAL 60 * 3
 
-void submitTelemetry(void * parameter){
-  for(;;){ // infinite loop
+void submitTelemetry(void *parameter)
+{
+  for (;;)
+  { // infinite loop
 
     Serial.println("submission started");
     displayData.submission = true;
     Telemetry::send(gTelemteryData);
     displayData.submission = false;
     Serial.println("submission finished");
-
 
     // Pause before next submission interval
     vTaskDelay(1000 * SUBMISSION_INTERVAL_SEC / portTICK_PERIOD_MS);
@@ -36,14 +37,22 @@ void submitTelemetry(void * parameter){
 void setup()
 {
   Serial.begin(115200);
-  Display::displaySetup();
 
-  Display::bootScreen();
+  if (DISPLAY_ENABLED)
+  {
+    Display::displaySetup();
+    Display::bootScreen();
+  }
 
   //connect();
-  RealTime::setupRtcModule();
+  if (RTC_ENABLED)
+  {
+    RealTime::setupRtcModule();
+  }else{
+    RealTime::setupWithoutRTC();
+  }
 
-  int now = RealTime::getTimestamp();
+  //int now = RealTime::getTimestamp();
   int uptime = RealTime::getUptime();
   //securitySetup();
   climateSetup(uptime);
@@ -52,16 +61,15 @@ void setup()
   //Encoder::setup();
 
   xTaskCreate(
-    submitTelemetry,    // Function that should be called
-    "submitTelemetry",   // Name of the task (for debugging)
-    1024 * 10 ,            // Stack size (bytes)
-    NULL,            // Parameter to pass
-    1,               // Task priority
-    NULL             // Task handle
+      submitTelemetry,   // Function that should be called
+      "submitTelemetry", // Name of the task (for debugging)
+      1024 * 10,         // Stack size (bytes)
+      NULL,              // Parameter to pass
+      1,                 // Task priority
+      NULL               // Task handle
   );
 
   delay(1000);
-
 }
 
 void loop()
@@ -105,17 +113,19 @@ void loop()
     }*/
   }
 
-  displayData.nextHarvestInSec = HARVESTING_INTERVAL_SEC - (uptime - lastSensorFetch);
-
-  displayData.terrId = TERRARIUM_ID;
-  displayData.hour = RealTime::getHour();
-  displayData.minute = RealTime::getMinute();
-  displayData.second = RealTime::getSecond();
-
-  if (uptime - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
+  if (DISPLAY_ENABLED)
   {
-    Display::render(displayData);
-    lastTimeRender = uptime;
+    displayData.nextHarvestInSec = HARVESTING_INTERVAL_SEC - (uptime - lastSensorFetch);
+
+    displayData.terrId = TERRARIUM_ID;
+    displayData.hour = RealTime::getHour();
+    displayData.minute = RealTime::getMinute();
+    displayData.second = RealTime::getSecond();
+
+    if (uptime - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
+    {
+      Display::render(displayData);
+      lastTimeRender = uptime;
+    }
   }
 }
-

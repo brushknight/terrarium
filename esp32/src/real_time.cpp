@@ -6,7 +6,7 @@ namespace RealTime
     const char *ntpServer1 = "pool.ntp.org";
     const char *ntpServer2 = "1.europe.pool.ntp.org";
     const char *ntpServer3 = "2.europe.pool.ntp.org";
-    const long gmtOffset_sec = 0;     // todo fix this to be +1
+    const long gmtOffset_sec = 3600;  // todo fix this to be +1
     const int daylightOffset_sec = 0; // fix this to accept DST
 
     RTC_DS3231 rtc;
@@ -55,6 +55,10 @@ namespace RealTime
         //Serial.println(rtc.now().hour());
     }
 
+    void setupWithoutRTC(){
+        syncTime();
+    }
+
     void syncTime()
     {
         Net::connect(true);
@@ -63,12 +67,28 @@ namespace RealTime
 
     int getHour()
     {
+        int hour = 0;
 
-        int hour = int(rtc.now().hour());
-
-        if (hour > 23){
-            syncTime();
+        if (RTC_ENABLED)
+        {
             hour = int(rtc.now().hour());
+
+            if (hour > 23)
+            {
+                syncTime();
+                hour = int(rtc.now().hour());
+            }
+        }
+        else
+        {
+            struct tm timeinfo;
+            if (!getLocalTime(&timeinfo))
+            {
+                Serial.println("Failed to obtain time");
+                abort();
+            }
+
+            hour = timeinfo.tm_hour;
         }
 
         return hour;
@@ -76,17 +96,56 @@ namespace RealTime
 
     int getMinute()
     {
-        return int(rtc.now().minute());
+        int minute = 0;
+        if (RTC_ENABLED)
+        {
+            minute = int(rtc.now().minute());
+        }
+        else
+        {
+            struct tm timeinfo;
+            if (!getLocalTime(&timeinfo))
+            {
+                Serial.println("Failed to obtain time");
+                abort();
+            }
+
+            minute = timeinfo.tm_min;
+        }
+
+        return minute;
     }
 
     int getSecond()
     {
-        return int(rtc.now().second());
+        int second = 0;
+        if (RTC_ENABLED)
+        {
+            second = int(rtc.now().second());
+        }
+        else
+        {
+            struct tm timeinfo;
+            if (!getLocalTime(&timeinfo))
+            {
+                Serial.println("Failed to obtain time");
+                abort();
+            }
+
+            second = timeinfo.tm_sec;
+        }
+
+        return second;
     }
 
     uint32_t getTimestamp()
     {
-        return rtc.now().secondstime();
+        if (RTC_ENABLED){
+            return rtc.now().secondstime();
+        }else{
+            return 0;
+        }
+        
     }
 
     void printLocalTime()

@@ -44,8 +44,6 @@ time in UTC
     DHT_Unified dhtColdCenter(DHT_COLD_CENTER_PIN, DHTTYPE);
     DHT_Unified dhtColdSide(DHT_COLD_SIDE_PIN, DHTTYPE);
 
-    volatile byte relayState = LOW;
-
     HeaterPhase heaterPhase;
 
     ClimateData readTempHumid(DHT_Unified dht)
@@ -56,44 +54,57 @@ time in UTC
         dht.temperature().getEvent(&event);
         if (isnan(event.temperature))
         {
-            // Serial.println(F("Error reading temperature!"));
+            Serial.println(F("Error reading temperature!"));
         }
         else
         {
             data.t = event.temperature;
-            // Serial.print(F("Temperature: "));
-            // Serial.print(event.temperature);
-            // Serial.println(F("°C"));
+            Serial.print(F("Temperature: "));
+            Serial.print(event.temperature);
+            Serial.println(F("°C"));
         }
         // Get humidity event and print its value.
         dht.humidity().getEvent(&event);
         if (isnan(event.relative_humidity))
         {
-            // Serial.println(F("Error reading humidity!"));
+            Serial.println(F("Error reading humidity!"));
         }
         else
         {
             data.h = event.relative_humidity;
-            // Serial.print(F("Humidity: "));
-            // Serial.print(event.relative_humidity);
-            // Serial.println(F("%"));
+            Serial.print(F("Humidity: "));
+            Serial.print(event.relative_humidity);
+            Serial.println(F("%"));
         }
         return data;
     }
 
     void turnRelayOn()
     {
-        relayState = HIGH;
         heaterPhase = heating;
-        digitalWrite(HEATER_RELAY_PIN, relayState);
+        if (OLD_SCHEME)
+        {
+            digitalWrite(HEATER_RELAY_PIN, LOW); // for old scheme
+        }
+        else
+        {
+            digitalWrite(HEATER_RELAY_PIN, HIGH);
+        }
+
         //Serial.println("turn relay on");
     }
 
     void turnRelayOff()
     {
-        relayState = LOW;
         heaterPhase = cooling;
-        digitalWrite(HEATER_RELAY_PIN, relayState);
+        if (OLD_SCHEME)
+        {
+            digitalWrite(HEATER_RELAY_PIN, HIGH); // for old scheme
+        }
+        else
+        {
+            digitalWrite(HEATER_RELAY_PIN, LOW);
+        }
         //Serial.println("turn relay off");
     }
 
@@ -136,7 +147,7 @@ time in UTC
 
         if (lastNotNullReadings != 0 && uptime - lastNotNullReadings > MAX_NULL_READINGS_SEC)
         {
-            //ESP.restart();
+            ESP.restart();
         }
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();

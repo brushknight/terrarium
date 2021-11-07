@@ -10,6 +10,7 @@
 namespace RealTime{
     void syncTime();
     void setupRtcModule();
+    void setupWithoutRTC();
     int getHour();
     int getMinute();
     int getSecond();

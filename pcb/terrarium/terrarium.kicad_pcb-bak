@@ -2,7 +2,7 @@
 
   (general
     (thickness 1.6)
-    (drawings 71)
+    (drawings 72)
     (tracks 104)
     (zones 0)
     (modules 15)
@@ -65,9 +65,9 @@
     (pcbplotparams
       (layerselection 0x010fc_ffffffff)
       (usegerberextensions false)
-      (usegerberattributes false)
-      (usegerberadvancedattributes false)
-      (creategerberjobfile false)
+      (usegerberattributes true)
+      (usegerberadvancedattributes true)
+      (creategerberjobfile true)
       (excludeedgelayer false)
       (linewidth 0.100000)
       (plotframeref false)
@@ -1041,6 +1041,9 @@
     )
   )
 
+  (gr_text JLCJLCJLCJLC (at 85.852 107.696) (layer F.SilkS)
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
   (gr_line (start 131 23) (end 41 23) (layer Edge.Cuts) (width 0.05) (tstamp 61884A2F))
   (gr_line (start 131 113) (end 131 23) (layer Edge.Cuts) (width 0.05))
   (gr_line (start 41 113) (end 131 113) (layer Edge.Cuts) (width 0.05))
@@ -1328,7 +1331,7 @@
   (segment (start 91.44 46.736) (end 91.44 49.53) (width 0.25) (layer F.Cu) (net 37))
   (segment (start 89.662 44.958) (end 91.44 46.736) (width 0.25) (layer F.Cu) (net 37))
 
-  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 61884914) (hatch edge 0.508)
+  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 61884B38) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))

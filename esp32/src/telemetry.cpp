@@ -51,6 +51,8 @@ namespace Telemetry
             doc["heater_phase"] = "heating";
         }
 
+        doc["is_day"] = telemteryData.isDay;
+
         doc.createNestedObject("hot_side");
         doc["hot_side"]["H"] = telemteryData.hotSide.h;
         doc["hot_side"]["T"] = telemteryData.hotSide.t;

@@ -30,10 +30,10 @@ time in UTC
 
 #define DAY_MAX_TEMP 28.5
 #define DAY_TEMP_TOLERANCE_WARM 0.5
-#define DAY_TEMP_TOLERANCE_COLD 0.6
+#define DAY_TEMP_TOLERANCE_COLD 0.7
 #define NIGHT_MAX_TEMP 23
 #define NIGHT_TEMP_TOLERANCE_WARM 0.5
-#define NIGHT_TEMP_TOLERANCE_COLD 0.6
+#define NIGHT_TEMP_TOLERANCE_COLD 0.7
 
 #define MAX_NULL_READINGS_SEC 30
 
@@ -161,6 +161,13 @@ time in UTC
             minTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_COLD;
         }
 
+
+        if (SENSORS_COUNT == 2)
+        {
+            hotCenter = hotSide;
+            coldCenter = coldSide;
+        }
+
         if (heaterPhase == cooling)
         {
             if (hotSide.t <= minTemp && hotCenter.t <= minTemp)
@@ -190,19 +197,22 @@ time in UTC
 
         telemetryData.hotSide = hotSide;
 
-        if (SENSORS_COUNT == 2)
-        {
-            telemetryData.hotCenter = hotSide;
-            telemetryData.coldCenter = coldSide;
-        }
-        else if (SENSORS_COUNT == 4)
-        {
-            telemetryData.hotCenter = hotCenter;
-            telemetryData.coldCenter = coldCenter;
-        }
+        // if (SENSORS_COUNT == 2)
+        // {
+        //     telemetryData.hotCenter = hotSide;
+        //     telemetryData.coldCenter = coldSide;
+        // }
+        // else if (SENSORS_COUNT == 4)
+        // {
+        //     telemetryData.hotCenter = hotCenter;
+        //     telemetryData.coldCenter = coldCenter;
+        // }
 
+        telemetryData.hotCenter = hotCenter;
+        telemetryData.coldCenter = coldCenter;
         telemetryData.coldSide = coldSide;
         telemetryData.heaterPhase = heaterPhase;
+
 
         telemetryData.climateConfig.dayMaxTemp = DAY_MAX_TEMP;
         telemetryData.climateConfig.nightMaxTemp = NIGHT_MAX_TEMP;
@@ -210,6 +220,8 @@ time in UTC
         telemetryData.climateConfig.dayTempToleranceCold = DAY_TEMP_TOLERANCE_COLD;
         telemetryData.climateConfig.nightTempToleranceWarm = NIGHT_TEMP_TOLERANCE_WARM;
         telemetryData.climateConfig.nightTempToleranceCold = NIGHT_TEMP_TOLERANCE_COLD;
+
+        telemetryData.isDay = isDay;
 
         telemetryData.fullfilled = true;
 

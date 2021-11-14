@@ -37,6 +37,7 @@ namespace Telemetry
         int hour;
         int minute;
         int second;
+        bool isDay;
     };
 
     void send(TelemteryData telemteryData);

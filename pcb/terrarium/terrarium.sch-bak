@@ -195,7 +195,7 @@ U 1 1 618742D4
 P 2200 1200
 F 0 "i2c2" H 2280 1192 50  0000 L CNN
 F 1 "LCD" H 2280 1101 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 2200 1200 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B4B-XH-AM_1x04_P2.50mm_Vertical" H 2200 1200 50  0001 C CNN
 F 3 "~" H 2200 1200 50  0001 C CNN
 	1    2200 1200
 	1    0    0    -1  
@@ -637,180 +637,6 @@ Wire Wire Line
 Wire Wire Line
 	850  6200 1250 6200
 $Comp
-L power:GND #PWR04
-U 1 1 6198004E
-P 6250 2800
-F 0 "#PWR04" H 6250 2550 50  0001 C CNN
-F 1 "GND" V 6255 2672 50  0000 R CNN
-F 2 "" H 6250 2800 50  0001 C CNN
-F 3 "" H 6250 2800 50  0001 C CNN
-	1    6250 2800
-	0    1    1    0   
-$EndComp
-Text GLabel 6250 1350 0    50   Input ~ 0
-G4
-$Comp
-L Relay:SANYOU_SRD_Form_C RE1
-U 1 1 61980055
-P 8700 2050
-F 0 "RE1" H 9100 2050 50  0000 L CNN
-F 1 "SANYOU_SRD_Form_C" H 8300 1900 50  0000 L CNN
-F 2 "Relay_THT:Relay_SPDT_SANYOU_SRD_Series_Form_C" H 9150 2000 50  0001 L CNN
-F 3 "http://www.sanyourelay.ca/public/products/pdf/SRD.pdf" H 8700 2050 50  0001 C CNN
-	1    8700 2050
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Screw_Terminal_01x03 S1
-U 1 1 6198005B
-P 9850 1600
-F 0 "S1" H 9850 1800 50  0000 L CNN
-F 1 "Screw_Terminal_01x03" H 9900 1600 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical" H 9850 1600 50  0001 C CNN
-F 3 "~" H 9850 1600 50  0001 C CNN
-	1    9850 1600
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R_Small R1
-U 1 1 61980061
-P 6500 1600
-F 0 "R1" H 6450 1500 50  0000 C CNN
-F 1 "R_Small" H 6300 1600 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 6500 1600 50  0001 C CNN
-F 3 "~" H 6500 1600 50  0001 C CNN
-	1    6500 1600
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	6250 1350 6500 1350
-Wire Wire Line
-	6500 1350 6500 1500
-Wire Wire Line
-	6500 1700 6500 1950
-$Comp
-L Relay_SolidState:MOC3020M OC1
-U 1 1 6198006A
-P 6800 2050
-F 0 "OC1" H 6800 2250 50  0000 C CNN
-F 1 "MOC3020M" H 6800 1850 50  0000 C CNN
-F 2 "Package_DIP:DIP-6_W7.62mm" H 5450 2050 50  0000 L CIN
-F 3 "https://www.onsemi.com/pub/Collateral/MOC3023M-D.PDF" H 6800 2050 50  0001 L CNN
-	1    6800 2050
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:LED LED1
-U 1 1 61980070
-P 6500 2500
-F 0 "LED1" V 6600 2500 50  0000 R CNN
-F 1 "ACTIVE" V 6500 2450 50  0000 R CNN
-F 2 "LED_THT:LED_D3.0mm_Clear" H 6500 2500 50  0001 C CNN
-F 3 "~" H 6500 2500 50  0001 C CNN
-	1    6500 2500
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	6500 2150 6500 2350
-Wire Wire Line
-	6500 2650 6500 2800
-Wire Wire Line
-	6500 2800 6250 2800
-Wire Wire Line
-	7150 1950 7100 1950
-$Comp
-L power:+5V #PWR06
-U 1 1 61980080
-P 7150 1350
-F 0 "#PWR06" H 7150 1200 50  0001 C CNN
-F 1 "+5V" H 7050 1500 50  0000 L CNN
-F 2 "" H 7150 1350 50  0001 C CNN
-F 3 "" H 7150 1350 50  0001 C CNN
-	1    7150 1350
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9250 2350 8900 2350
-Wire Wire Line
-	8800 1750 8800 1500
-Wire Wire Line
-	8800 1500 9650 1500
-$Comp
-L Transistor_BJT:MMBT3904 TR1
-U 1 1 61993C35
-P 7750 2750
-F 0 "TR1" H 7941 2796 50  0000 L CNN
-F 1 "MMBT3904" H 7941 2705 50  0000 L CNN
-F 2 "Package_TO_SOT_THT:TO-92" H 7950 2675 50  0001 L CIN
-F 3 "https://www.onsemi.com/pub/Collateral/2N3903-D.PDF" H 7750 2750 50  0001 L CNN
-	1    7750 2750
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8500 1450 8500 1750
-Wire Wire Line
-	7850 2350 7850 2550
-Wire Wire Line
-	7850 2950 6500 2950
-Wire Wire Line
-	6500 2950 6500 2800
-Connection ~ 6500 2800
-Wire Wire Line
-	7150 2150 7150 2400
-$Comp
-L Device:R_Small R2
-U 1 1 619CC008
-P 7150 2500
-F 0 "R2" H 7100 2400 50  0000 C CNN
-F 1 "R_Small" H 6950 2500 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 7150 2500 50  0001 C CNN
-F 3 "~" H 7150 2500 50  0001 C CNN
-	1    7150 2500
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	7150 2600 7150 2750
-Wire Wire Line
-	7100 2150 7150 2150
-Wire Wire Line
-	7150 2750 7550 2750
-Connection ~ 7850 2350
-Wire Wire Line
-	7850 2350 8500 2350
-Wire Wire Line
-	7150 1350 7150 1450
-Connection ~ 7150 1450
-Wire Wire Line
-	7150 1450 7150 1950
-$Comp
-L Diode:1N47xxA D1
-U 1 1 61A2128A
-P 7850 2000
-F 0 "D1" V 7804 2080 50  0000 L CNN
-F 1 "1N47xxA" V 7895 2080 50  0000 L CNN
-F 2 "Diode_THT:D_DO-41_SOD81_P7.62mm_Horizontal" H 7850 1825 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/85816/1n4728a.pdf" H 7850 2000 50  0001 C CNN
-	1    7850 2000
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	7150 1450 7850 1450
-Wire Wire Line
-	7850 2150 7850 2350
-Wire Wire Line
-	7850 1850 7850 1450
-Connection ~ 7850 1450
-Wire Wire Line
-	7850 1450 8500 1450
-Wire Wire Line
-	9250 1600 9650 1600
-Wire Wire Line
-	9250 1600 9250 2350
-Wire Wire Line
-	9000 1750 9000 1700
-Wire Wire Line
-	9000 1700 9650 1700
-$Comp
 L Connector_Generic_MountingPin:Conn_01x03_MountingPin temp5
 U 1 1 619D2951
 P 4250 2100
@@ -922,161 +748,6 @@ Wire Notes Line
 	700  2300 700  700 
 Text Notes 700  650  0    50   ~ 0
 i2c BUS
-$Comp
-L power:GND #PWR0132
-U 1 1 61AEE680
-P 6250 5100
-F 0 "#PWR0132" H 6250 4850 50  0001 C CNN
-F 1 "GND" V 6255 4972 50  0000 R CNN
-F 2 "" H 6250 5100 50  0001 C CNN
-F 3 "" H 6250 5100 50  0001 C CNN
-	1    6250 5100
-	0    1    1    0   
-$EndComp
-Text GLabel 6250 3650 0    50   Input ~ 0
-G5
-$Comp
-L Relay:SANYOU_SRD_Form_C RE2
-U 1 1 61AEE687
-P 8700 4350
-F 0 "RE2" H 9100 4350 50  0000 L CNN
-F 1 "SANYOU_SRD_Form_C" H 8300 4200 50  0000 L CNN
-F 2 "Relay_THT:Relay_SPDT_SANYOU_SRD_Series_Form_C" H 9150 4300 50  0001 L CNN
-F 3 "http://www.sanyourelay.ca/public/products/pdf/SRD.pdf" H 8700 4350 50  0001 C CNN
-	1    8700 4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Screw_Terminal_01x03 S2
-U 1 1 61AEE68D
-P 9850 3900
-F 0 "S2" H 9850 4100 50  0000 L CNN
-F 1 "Screw_Terminal_01x03" H 9900 3900 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical" H 9850 3900 50  0001 C CNN
-F 3 "~" H 9850 3900 50  0001 C CNN
-	1    9850 3900
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R_Small R3
-U 1 1 61AEE693
-P 6500 3900
-F 0 "R3" H 6450 3800 50  0000 C CNN
-F 1 "R_Small" H 6300 3900 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 6500 3900 50  0001 C CNN
-F 3 "~" H 6500 3900 50  0001 C CNN
-	1    6500 3900
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	6250 3650 6500 3650
-Wire Wire Line
-	6500 3650 6500 3800
-Wire Wire Line
-	6500 4000 6500 4250
-$Comp
-L Relay_SolidState:MOC3020M OC2
-U 1 1 61AEE69C
-P 6800 4350
-F 0 "OC2" H 6800 4550 50  0000 C CNN
-F 1 "MOC3020M" H 6800 4150 50  0000 C CNN
-F 2 "Package_DIP:DIP-6_W7.62mm" H 5450 4350 50  0000 L CIN
-F 3 "https://www.onsemi.com/pub/Collateral/MOC3023M-D.PDF" H 6800 4350 50  0001 L CNN
-	1    6800 4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:LED LED2
-U 1 1 61AEE6A2
-P 6500 4800
-F 0 "LED2" V 6600 4800 50  0000 R CNN
-F 1 "ACTIVE" V 6500 4750 50  0000 R CNN
-F 2 "LED_THT:LED_D3.0mm_Clear" H 6500 4800 50  0001 C CNN
-F 3 "~" H 6500 4800 50  0001 C CNN
-	1    6500 4800
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	6500 4450 6500 4650
-Wire Wire Line
-	6500 4950 6500 5100
-Wire Wire Line
-	6500 5100 6250 5100
-Wire Wire Line
-	7150 4250 7100 4250
-$Comp
-L power:+5V #PWR0133
-U 1 1 61AEE6AC
-P 7150 3650
-F 0 "#PWR0133" H 7150 3500 50  0001 C CNN
-F 1 "+5V" H 7050 3800 50  0000 L CNN
-F 2 "" H 7150 3650 50  0001 C CNN
-F 3 "" H 7150 3650 50  0001 C CNN
-	1    7150 3650
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9250 4650 8900 4650
-Wire Wire Line
-	8800 4050 8800 3800
-Wire Wire Line
-	8800 3800 9650 3800
-Wire Wire Line
-	8500 3750 8500 4050
-Wire Wire Line
-	7850 4650 7850 4850
-Wire Wire Line
-	7850 5250 6500 5250
-Wire Wire Line
-	6500 5250 6500 5100
-Connection ~ 6500 5100
-Wire Wire Line
-	7150 4450 7150 4700
-$Comp
-L Device:R_Small R4
-U 1 1 61AEE6C1
-P 7150 4800
-F 0 "R4" H 7100 4700 50  0000 C CNN
-F 1 "R_Small" H 6950 4800 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 7150 4800 50  0001 C CNN
-F 3 "~" H 7150 4800 50  0001 C CNN
-	1    7150 4800
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	7150 4900 7150 5050
-Wire Wire Line
-	7100 4450 7150 4450
-Wire Wire Line
-	7150 5050 7550 5050
-Connection ~ 7850 4650
-Wire Wire Line
-	7850 4650 8500 4650
-$Comp
-L Diode:1N47xxA D2
-U 1 1 61AEE6CF
-P 7850 4300
-F 0 "D2" V 7804 4380 50  0000 L CNN
-F 1 "1N47xxA" V 7895 4380 50  0000 L CNN
-F 2 "Diode_THT:D_DO-41_SOD81_P7.62mm_Horizontal" H 7850 4125 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/85816/1n4728a.pdf" H 7850 4300 50  0001 C CNN
-	1    7850 4300
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	7850 4450 7850 4650
-Wire Wire Line
-	7850 4150 7850 3750
-Wire Wire Line
-	7850 3750 8500 3750
-Wire Wire Line
-	9250 3900 9650 3900
-Wire Wire Line
-	9250 3900 9250 4650
-Wire Wire Line
-	9000 4050 9000 4000
-Wire Wire Line
-	9000 4000 9650 4000
 Wire Notes Line
 	700  2700 700  5400
 Wire Notes Line
@@ -1087,23 +758,281 @@ Wire Notes Line
 	3000 2700 700  2700
 Text Notes 700  2650 0    50   ~ 0
 esp32
-Wire Wire Line
-	7150 3650 7150 3750
-Wire Wire Line
-	7850 3750 7150 3750
-Connection ~ 7850 3750
-Connection ~ 7150 3750
-Wire Wire Line
-	7150 3750 7150 4250
 $Comp
-L Transistor_BJT:MMBT3904 TR2
-U 1 1 61AEE6B5
-P 7750 5050
-F 0 "TR2" H 7941 5096 50  0000 L CNN
-F 1 "MMBT3904" H 7941 5005 50  0000 L CNN
-F 2 "Package_TO_SOT_THT:TO-92" H 7950 4975 50  0001 L CIN
-F 3 "https://www.onsemi.com/pub/Collateral/2N3903-D.PDF" H 7750 5050 50  0001 L CNN
-	1    7750 5050
+L Transistor_BJT:MMBT3904 TR1
+U 1 1 6199641F
+P 7250 2200
+F 0 "TR1" H 7441 2246 50  0000 L CNN
+F 1 "MMBT3904" H 7441 2155 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92" H 7450 2125 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/2N3903-D.PDF" H 7250 2200 50  0001 L CNN
+	1    7250 2200
 	1    0    0    -1  
 $EndComp
+Text GLabel 6250 1900 0    50   Input ~ 0
+G4
+$Comp
+L power:GND #PWR?
+U 1 1 6199C732
+P 7300 2550
+F 0 "#PWR?" H 7300 2300 50  0001 C CNN
+F 1 "GND" V 7305 2422 50  0000 R CNN
+F 2 "" H 7300 2550 50  0001 C CNN
+F 3 "" H 7300 2550 50  0001 C CNN
+	1    7300 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small R1
+U 1 1 619C01B4
+P 6900 1900
+F 0 "R1" V 7000 1950 50  0000 C CNN
+F 1 "R_Small" V 6800 1900 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 6900 1900 50  0001 C CNN
+F 3 "~" H 6900 1900 50  0001 C CNN
+	1    6900 1900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED LED1
+U 1 1 61999143
+P 6550 1900
+F 0 "LED1" H 6650 1800 50  0000 R CNN
+F 1 "ACTIVE" H 6650 2000 50  0000 R CNN
+F 2 "LED_THT:LED_D3.0mm_Clear" H 6550 1900 50  0001 C CNN
+F 3 "~" H 6550 1900 50  0001 C CNN
+	1    6550 1900
+	-1   0    0    1   
+$EndComp
+$Comp
+L Relay:SANYOU_SRD_Form_C RE1
+U 1 1 61A8229E
+P 8050 1600
+F 0 "RE1" H 8450 1600 50  0000 L CNN
+F 1 "SANYOU_SRD_Form_C" H 7650 1450 50  0000 L CNN
+F 2 "Relay_THT:Relay_SPDT_SANYOU_SRD_Series_Form_C" H 8500 1550 50  0001 L CNN
+F 3 "http://www.sanyourelay.ca/public/products/pdf/SRD.pdf" H 8050 1600 50  0001 C CNN
+	1    8050 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Screw_Terminal_01x03 S1
+U 1 1 61A822A4
+P 9200 1150
+F 0 "S1" H 9200 1350 50  0000 L CNN
+F 1 "Screw_Terminal_01x03" H 9250 1150 50  0000 L CNN
+F 2 "TerminalBlock:TerminalBlock_bornier-3_P5.08mm" H 9200 1150 50  0001 C CNN
+F 3 "~" H 9200 1150 50  0001 C CNN
+	1    9200 1150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8600 1900 8250 1900
+Wire Wire Line
+	8150 1300 8150 1050
+Wire Wire Line
+	8150 1050 9000 1050
+Wire Wire Line
+	8600 1150 9000 1150
+Wire Wire Line
+	8600 1150 8600 1900
+Wire Wire Line
+	8350 1300 8350 1250
+Wire Wire Line
+	8350 1250 9000 1250
+$Comp
+L power:+5V #PWR?
+U 1 1 61AB5DA0
+P 7150 1250
+F 0 "#PWR?" H 7150 1100 50  0001 C CNN
+F 1 "+5V" H 7050 1400 50  0000 L CNN
+F 2 "" H 7150 1250 50  0001 C CNN
+F 3 "" H 7150 1250 50  0001 C CNN
+	1    7150 1250
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	7850 1250 7850 1300
+Wire Wire Line
+	7350 1550 7350 1250
+Wire Wire Line
+	7350 1250 7850 1250
+Wire Wire Line
+	7350 2000 7350 1900
+Wire Wire Line
+	6250 1900 6400 1900
+Wire Wire Line
+	6700 1900 6800 1900
+Wire Wire Line
+	7000 1900 7050 1900
+Wire Wire Line
+	7050 1900 7050 2200
+Wire Wire Line
+	7850 1900 7350 1900
+Connection ~ 7350 1900
+Wire Wire Line
+	7350 1900 7350 1850
+Wire Wire Line
+	7350 2400 7350 2550
+Wire Wire Line
+	7350 2550 7300 2550
+$Comp
+L Diode:1N47xxA D1
+U 1 1 619E1C86
+P 7350 1700
+F 0 "D1" V 7350 1750 50  0000 L CNN
+F 1 "1N47xxA" V 7500 1700 50  0000 L CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P7.62mm_Horizontal" H 7350 1525 50  0001 C CNN
+F 3 "https://www.vishay.com/docs/85816/1n4728a.pdf" H 7350 1700 50  0001 C CNN
+	1    7350 1700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7150 1250 7350 1250
+Connection ~ 7350 1250
+$Comp
+L Transistor_BJT:MMBT3904 TR2
+U 1 1 61BA8A67
+P 7250 3950
+F 0 "TR2" H 7441 3996 50  0000 L CNN
+F 1 "MMBT3904" H 7441 3905 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92" H 7450 3875 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/2N3903-D.PDF" H 7250 3950 50  0001 L CNN
+	1    7250 3950
+	1    0    0    -1  
+$EndComp
+Text GLabel 6250 3650 0    50   Input ~ 0
+G5
+$Comp
+L power:GND #PWR?
+U 1 1 61BA8A6E
+P 6900 4300
+F 0 "#PWR?" H 6900 4050 50  0001 C CNN
+F 1 "GND" V 6905 4172 50  0000 R CNN
+F 2 "" H 6900 4300 50  0001 C CNN
+F 3 "" H 6900 4300 50  0001 C CNN
+	1    6900 4300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small R2
+U 1 1 61BA8A74
+P 6900 3650
+F 0 "R2" V 7000 3700 50  0000 C CNN
+F 1 "R_Small" V 6800 3650 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 6900 3650 50  0001 C CNN
+F 3 "~" H 6900 3650 50  0001 C CNN
+	1    6900 3650
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED LED2
+U 1 1 61BA8A7A
+P 6550 3650
+F 0 "LED2" H 6650 3550 50  0000 R CNN
+F 1 "ACTIVE" H 6650 3750 50  0000 R CNN
+F 2 "LED_THT:LED_D3.0mm_Clear" H 6550 3650 50  0001 C CNN
+F 3 "~" H 6550 3650 50  0001 C CNN
+	1    6550 3650
+	-1   0    0    1   
+$EndComp
+$Comp
+L Relay:SANYOU_SRD_Form_C RE2
+U 1 1 61BA8A80
+P 8050 3350
+F 0 "RE2" H 8450 3350 50  0000 L CNN
+F 1 "SANYOU_SRD_Form_C" H 7650 3200 50  0000 L CNN
+F 2 "Relay_THT:Relay_SPDT_SANYOU_SRD_Series_Form_C" H 8500 3300 50  0001 L CNN
+F 3 "http://www.sanyourelay.ca/public/products/pdf/SRD.pdf" H 8050 3350 50  0001 C CNN
+	1    8050 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Screw_Terminal_01x03 S2
+U 1 1 61BA8A86
+P 9200 2900
+F 0 "S2" H 9200 3100 50  0000 L CNN
+F 1 "Screw_Terminal_01x03" H 9250 2900 50  0000 L CNN
+F 2 "TerminalBlock:TerminalBlock_bornier-3_P5.08mm" H 9200 2900 50  0001 C CNN
+F 3 "~" H 9200 2900 50  0001 C CNN
+	1    9200 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8600 3650 8250 3650
+Wire Wire Line
+	8150 3050 8150 2800
+Wire Wire Line
+	8150 2800 9000 2800
+Wire Wire Line
+	8600 2900 9000 2900
+Wire Wire Line
+	8600 2900 8600 3650
+Wire Wire Line
+	8350 3050 8350 3000
+Wire Wire Line
+	8350 3000 9000 3000
+$Comp
+L power:+5V #PWR?
+U 1 1 61BA8A93
+P 7150 3000
+F 0 "#PWR?" H 7150 2850 50  0001 C CNN
+F 1 "+5V" H 7050 3150 50  0000 L CNN
+F 2 "" H 7150 3000 50  0001 C CNN
+F 3 "" H 7150 3000 50  0001 C CNN
+	1    7150 3000
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	7850 3000 7850 3050
+Wire Wire Line
+	7350 3300 7350 3000
+Wire Wire Line
+	7350 3000 7850 3000
+Wire Wire Line
+	7350 3750 7350 3650
+Wire Wire Line
+	6250 3650 6400 3650
+Wire Wire Line
+	6700 3650 6800 3650
+Wire Wire Line
+	7000 3650 7050 3650
+Wire Wire Line
+	7050 3650 7050 3950
+Wire Wire Line
+	7850 3650 7350 3650
+Connection ~ 7350 3650
+Wire Wire Line
+	7350 3650 7350 3600
+Wire Wire Line
+	7350 4150 7350 4300
+$Comp
+L Diode:1N47xxA D2
+U 1 1 61BA8AA6
+P 7350 3450
+F 0 "D2" V 7350 3500 50  0000 L CNN
+F 1 "1N47xxA" V 7500 3450 50  0000 L CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P7.62mm_Horizontal" H 7350 3275 50  0001 C CNN
+F 3 "https://www.vishay.com/docs/85816/1n4728a.pdf" H 7350 3450 50  0001 C CNN
+	1    7350 3450
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7150 3000 7350 3000
+Connection ~ 7350 3000
+$Comp
+L Device:R_Small R?
+U 1 1 619544C9
+P 7100 4300
+F 0 "R?" V 7200 4350 50  0000 C CNN
+F 1 "R_Small" V 7000 4300 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" H 7100 4300 50  0001 C CNN
+F 3 "~" H 7100 4300 50  0001 C CNN
+	1    7100 4300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6900 4300 7000 4300
+Wire Wire Line
+	7200 4300 7350 4300
 $EndSCHEMATC

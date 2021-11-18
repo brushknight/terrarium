@@ -2,11 +2,11 @@
 
   (general
     (thickness 1.6)
-    (drawings 82)
+    (drawings 88)
     (tracks 137)
     (zones 0)
     (modules 35)
-    (nets 53)
+    (nets 52)
   )
 
   (page A4)
@@ -34,7 +34,7 @@
   )
 
   (setup
-    (last_trace_width 0.4)
+    (last_trace_width 2)
     (user_trace_width 0.2)
     (user_trace_width 0.4)
     (user_trace_width 2)
@@ -145,7 +145,6 @@
   (net 49 "Net-(R3-Pad2)")
   (net 50 "Net-(R2-Pad1)")
   (net 51 "Net-(R4-Pad1)")
-  (net 52 "Net-(S2-Pad1)")
 
   (net_class Default "This is the default net class."
     (clearance 0.2)
@@ -179,7 +178,6 @@
     (add_net "Net-(RE2-Pad1)")
     (add_net "Net-(RE2-Pad3)")
     (add_net "Net-(RE2-Pad4)")
-    (add_net "Net-(S2-Pad1)")
     (add_net "Net-(esp32-left1-Pad1)")
     (add_net "Net-(esp32-left1-Pad18)")
     (add_net "Net-(esp32-left1-Pad2)")
@@ -459,7 +457,7 @@
     (pad 2 thru_hole circle (at 5.08 0 180) (size 3 3) (drill 1.52) (layers *.Cu *.Mask)
       (net 43 "Net-(RE2-Pad1)"))
     (pad 1 thru_hole rect (at 0 0 180) (size 3 3) (drill 1.52) (layers *.Cu *.Mask)
-      (net 52 "Net-(S2-Pad1)"))
+      (net 44 "Net-(RE2-Pad4)"))
     (model ${KISYS3DMOD}/TerminalBlock.3dshapes/TerminalBlock_bornier-3_P5.08mm.wrl
       (offset (xyz 5.079999923706055 0 0))
       (scale (xyz 1 1 1))
@@ -1183,7 +1181,7 @@
     (descr "JST XH series connector, B3B-XH-AM, with boss (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
     (tags "connector JST XH vertical boss")
     (path /61871FA0)
-    (fp_text reference temp5 (at 8.89 0.635 180) (layer F.SilkS)
+    (fp_text reference HT5 (at 8.89 0.635 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 3 (at 2.5 4.6 90) (layer F.Fab) hide
@@ -1245,7 +1243,7 @@
     (descr "JST XH series connector, B3B-XH-AM, with boss (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
     (tags "connector JST XH vertical boss")
     (path /618725D3)
-    (fp_text reference temp4 (at 8.81 0.635 180) (layer F.SilkS)
+    (fp_text reference HT4 (at 8.81 0.635 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 2 (at 2.5 4.6 90) (layer F.Fab) hide
@@ -1307,7 +1305,7 @@
     (descr "JST XH series connector, B3B-XH-AM, with boss (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
     (tags "connector JST XH vertical boss")
     (path /61872C21)
-    (fp_text reference temp3 (at 8.89 0.635 180) (layer F.SilkS)
+    (fp_text reference HT3 (at 8.89 0.635 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 1 (at 2.5 4.6 90) (layer F.Fab) hide
@@ -1975,6 +1973,24 @@
     )
   )
 
+  (gr_text 1 (at 114.3 26) (layer F.SilkS) (tstamp 61975863)
+    (effects (font (size 2 2) (thickness 0.3)))
+  )
+  (gr_text 2 (at 104.775 26) (layer F.SilkS) (tstamp 61975863)
+    (effects (font (size 2 2) (thickness 0.3)))
+  )
+  (gr_text 3 (at 95.25 26) (layer F.SilkS) (tstamp 61975863)
+    (effects (font (size 2 2) (thickness 0.3)))
+  )
+  (gr_text 4 (at 85.598 26) (layer F.SilkS) (tstamp 61975863)
+    (effects (font (size 2 2) (thickness 0.3)))
+  )
+  (gr_text 5 (at 76.2 26) (layer F.SilkS) (tstamp 61975863)
+    (effects (font (size 2 2) (thickness 0.3)))
+  )
+  (gr_text 6 (at 66.675 26) (layer F.SilkS)
+    (effects (font (size 2 2) (thickness 0.3)))
+  )
   (gr_line (start 130.429 39.116) (end 124.968 39.116) (layer F.SilkS) (width 0.12) (tstamp 61973CC0))
   (gr_line (start 130.429 68.072) (end 125.095 68.072) (layer F.SilkS) (width 0.12) (tstamp 61973CBF))
   (gr_line (start 75.692 68.072) (end 73.152 68.072) (layer F.SilkS) (width 0.12) (tstamp 61973CBB))
@@ -2312,7 +2328,7 @@
   (segment (start 123.19 72.644) (end 123.19 77.724) (width 0.4) (layer F.Cu) (net 50))
   (segment (start 96.52 72.644) (end 96.52 77.724) (width 0.4) (layer F.Cu) (net 51))
 
-  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 61976D0D) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))

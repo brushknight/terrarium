@@ -143,7 +143,6 @@ NoConn ~ 2050 4500
 NoConn ~ 2050 4600
 NoConn ~ 2050 4700
 NoConn ~ 2050 4800
-NoConn ~ 1200 4800
 NoConn ~ 4600 4700
 NoConn ~ 3800 4700
 NoConn ~ 3550 1500
@@ -1086,12 +1085,6 @@ Wire Notes Line
 Text Notes 3150 3750 0    50   ~ 0
 Daughter board relays
 Wire Notes Line
-	700  5750 3000 5750
-Wire Notes Line
-	3000 5750 3000 7100
-Wire Notes Line
-	3000 7100 700  7100
-Wire Notes Line
 	700  7100 700  5750
 Text Notes 700  5700 0    50   ~ 0
 Utils
@@ -1134,4 +1127,78 @@ Wire Wire Line
 	8150 2900 8150 2650
 Wire Wire Line
 	8150 2650 9000 2650
+$Comp
+L LED:WS2812B AD1
+U 1 1 6197A54B
+P 2850 6400
+F 0 "AD1" H 2900 6650 50  0000 L CNN
+F 1 "WS2812B" H 2850 6150 50  0000 L CNN
+F 2 "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm" H 2900 6100 50  0001 L TNN
+F 3 "https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf" H 2950 6025 50  0001 L TNN
+	1    2850 6400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0136
+U 1 1 6197BC25
+P 2850 6850
+F 0 "#PWR0136" H 2850 6600 50  0001 C CNN
+F 1 "GND" H 2855 6677 50  0000 C CNN
+F 2 "" H 2850 6850 50  0001 C CNN
+F 3 "" H 2850 6850 50  0001 C CNN
+	1    2850 6850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2850 6700 2850 6800
+$Comp
+L power:+5V #PWR0137
+U 1 1 61982203
+P 2850 6000
+F 0 "#PWR0137" H 2850 5850 50  0001 C CNN
+F 1 "+5V" H 2865 6173 50  0000 C CNN
+F 2 "" H 2850 6000 50  0001 C CNN
+F 3 "" H 2850 6000 50  0001 C CNN
+	1    2850 6000
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	2850 6000 2850 6050
+Text GLabel 1200 4800 0    50   Input ~ 0
+G23
+Text GLabel 2400 6400 0    50   Input ~ 0
+G23
+Wire Wire Line
+	2400 6400 2550 6400
+$Comp
+L Device:C_Small C1
+U 1 1 6198D6DD
+P 3400 6400
+F 0 "C1" H 3492 6446 50  0000 L CNN
+F 1 "10pF" H 3492 6355 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 3400 6400 50  0001 C CNN
+F 3 "~" H 3400 6400 50  0001 C CNN
+	1    3400 6400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3400 6300 3400 6050
+Wire Wire Line
+	3400 6050 2850 6050
+Connection ~ 2850 6050
+Wire Wire Line
+	2850 6050 2850 6100
+Wire Wire Line
+	3400 6500 3400 6800
+Wire Wire Line
+	3400 6800 2850 6800
+Connection ~ 2850 6800
+Wire Wire Line
+	2850 6800 2850 6850
+Wire Notes Line
+	3800 5750 3800 7100
+Wire Notes Line
+	700  5750 3800 5750
+Wire Notes Line
+	700  7100 3800 7100
 $EndSCHEMATC

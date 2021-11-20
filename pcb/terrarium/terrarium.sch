@@ -1091,10 +1091,10 @@ Utils
 Wire Wire Line
 	8600 2750 9000 2750
 $Comp
-L Connector_Generic_MountingPin:Conn_01x03_MountingPin temp1
+L Connector_Generic_MountingPin:Conn_01x03_MountingPin HT1
 U 1 1 619D5390
 P 4950 2100
-F 0 "temp1" H 4900 2300 50  0000 L CNN
+F 0 "HT1" H 4900 2300 50  0000 L CNN
 F 1 "4" H 5000 2100 50  0000 L CNN
 F 2 "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical" H 4950 2100 50  0001 C CNN
 F 3 "~" H 4950 2100 50  0001 C CNN
@@ -1102,10 +1102,10 @@ F 3 "~" H 4950 2100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic_MountingPin:Conn_01x03_MountingPin temp2
+L Connector_Generic_MountingPin:Conn_01x03_MountingPin HT2
 U 1 1 619D2951
 P 4250 2100
-F 0 "temp2" H 4200 2300 50  0000 L CNN
+F 0 "HT2" H 4200 2300 50  0000 L CNN
 F 1 "4" H 4300 2100 50  0000 L CNN
 F 2 "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical" H 4250 2100 50  0001 C CNN
 F 3 "~" H 4250 2100 50  0001 C CNN
@@ -1113,10 +1113,10 @@ F 3 "~" H 4250 2100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic_MountingPin:Conn_01x03_MountingPin temp6
+L Connector_Generic_MountingPin:Conn_01x03_MountingPin HT6
 U 1 1 618718D1
 P 3550 2100
-F 0 "temp6" H 3500 2300 50  0000 L CNN
+F 0 "HT6" H 3500 2300 50  0000 L CNN
 F 1 "4" H 3600 2100 50  0000 L CNN
 F 2 "Connector_JST:JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical" H 3550 2100 50  0001 C CNN
 F 3 "~" H 3550 2100 50  0001 C CNN

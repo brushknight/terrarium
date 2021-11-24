@@ -29,8 +29,10 @@ namespace Telemetry
         ClimateData coldCenter;
         ClimateData coldSide;
         ClimateConfig climateConfig;
-        bool heater;
-        HeaterPhase heaterPhase;
+        bool hotZoneHeater;
+        bool coldZoneHeater;
+        HeaterPhase hotZoneheaterPhase;
+        HeaterPhase coldZoneheaterPhase;
         bool fullfilled;
         char* version;
         int uptime;

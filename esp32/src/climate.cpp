@@ -44,7 +44,8 @@ time in UTC
     DHT_Unified dhtColdCenter(DHT_COLD_CENTER_PIN, DHTTYPE);
     DHT_Unified dhtColdSide(DHT_COLD_SIDE_PIN, DHTTYPE);
 
-    HeaterPhase heaterPhase;
+    HeaterPhase hotZoneHeaterPhase;
+    HeaterPhase coldZoneHeaterPhase;
 
     ClimateData readTempHumid(DHT_Unified dht)
     {
@@ -81,7 +82,7 @@ time in UTC
 
     void turnRelayOn()
     {
-        heaterPhase = heating;
+        hotZoneHeaterPhase = heating;
         if (OLD_SCHEME)
         {
             digitalWrite(HEATER_RELAY_PIN, LOW); // for old scheme
@@ -96,7 +97,7 @@ time in UTC
 
     void turnRelayOff()
     {
-        heaterPhase = cooling;
+        hotZoneHeaterPhase = cooling;
         if (OLD_SCHEME)
         {
             digitalWrite(HEATER_RELAY_PIN, HIGH); // for old scheme
@@ -111,7 +112,7 @@ time in UTC
     void climateSetup(uint32_t uptime)
     {
         pinMode(HEATER_RELAY_PIN, OUTPUT);
-        turnRelayOff();
+        turnHotZoneRelayOff();
         dhtHotSide.begin();
         dhtHotCenter.begin();
         dhtColdCenter.begin();
@@ -152,15 +153,17 @@ time in UTC
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
 
-        float maxTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE_WARM;
-        float minTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE_COLD;
+        float hotZoneMaxTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE_WARM;
+        float hotZoneMinTemp = DAY_MAX_TEMP - DAY_TEMP_TOLERANCE_COLD;
 
         if (!isDay)
         {
-            maxTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_WARM;
-            minTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_COLD;
+            hotZoneMaxTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_WARM;
+            hotZoneMinTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_COLD;
         }
 
+        float coldZoneMaxTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_WARM;
+        float coldZoneMinTemp = NIGHT_MAX_TEMP - NIGHT_TEMP_TOLERANCE_COLD;
 
         if (SENSORS_COUNT == 2)
         {
@@ -168,51 +171,69 @@ time in UTC
             coldCenter = coldSide;
         }
 
-        if (heaterPhase == cooling)
+        if (hotZoneHeaterPhase == cooling)
         {
-            if (hotSide.t <= minTemp && hotCenter.t <= minTemp)
+            if (hotSide.t <= hotZoneMinTemp && hotCenter.t <= hotZoneMinTemp)
             {
-                turnRelayOn();
-                telemetryData.heater = true;
+                turnHotZoneRelayOn();
+                telemetryData.hotZoneHeater = true;
             }
             else
             {
-                turnRelayOff();
-                telemetryData.heater = false;
+                turnHotZoneRelayOff();
+                telemetryData.hotZoneHeater = false;
             }
         }
         else
         {
-            if (hotSide.t >= maxTemp || hotCenter.t >= maxTemp)
+            if (hotSide.t >= hotZoneMaxTemp || hotCenter.t >= hotZoneMaxTemp)
             {
-                turnRelayOff();
-                telemetryData.heater = false;
+                turnHotZoneRelayOff();
+                telemetryData.hotZoneHeater = false;
             }
             else
             {
-                turnRelayOn();
-                telemetryData.heater = true;
+                turnHotZoneRelayOn();
+                telemetryData.hotZoneHeater = true;
             }
         }
 
+        // check cold zone and trigger relay
+        if (hotZoneHeaterPhase == cooling)
+        {
+            if (coldSide.t <= coldZoneMinTemp && coldCenter.t <= coldZoneMinTemp)
+            {
+                turnColdZoneRelayOn();
+                telemetryData.coldZoneHeater = true;
+            }
+            else
+            {
+                turnColdZoneRelayOff();
+                telemetryData.coldZoneHeater = false;
+            }
+        }
+        else
+        {
+            if (coldSide.t >= coldZoneMaxTemp || coldCenter.t >= coldZoneMaxTemp)
+            {
+                turnColdZoneRelayOff();
+                telemetryData.coldZoneHeater = false;
+            }
+            else
+            {
+                turnColdZoneRelayOn();
+                telemetryData.coldZoneHeater = true;
+            }
+        }
+
+
+
         telemetryData.hotSide = hotSide;
-
-        // if (SENSORS_COUNT == 2)
-        // {
-        //     telemetryData.hotCenter = hotSide;
-        //     telemetryData.coldCenter = coldSide;
-        // }
-        // else if (SENSORS_COUNT == 4)
-        // {
-        //     telemetryData.hotCenter = hotCenter;
-        //     telemetryData.coldCenter = coldCenter;
-        // }
-
         telemetryData.hotCenter = hotCenter;
         telemetryData.coldCenter = coldCenter;
         telemetryData.coldSide = coldSide;
-        telemetryData.heaterPhase = heaterPhase;
-
+        telemetryData.hotZoneheaterPhase = hotZoneHeaterPhase;
+        telemetryData.coldZoneheaterPhase = coldZoneHeaterPhase;
 
         telemetryData.climateConfig.dayMaxTemp = DAY_MAX_TEMP;
         telemetryData.climateConfig.nightMaxTemp = NIGHT_MAX_TEMP;

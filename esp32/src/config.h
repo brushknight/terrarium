@@ -4,7 +4,7 @@
 #define SENSORS_COUNT 4
 #define TERRARIUM_ID 10
 
-#define VERSION "v2.2.6"
+#define VERSION "v2.2.7"
 
 #define DEBUG false
 

@@ -11,13 +11,9 @@
 namespace Climate
 {
 
-    void climateSetup(uint32_t now);
+    void setup(uint32_t now);
     ClimateData readTempHumid(DHT_Unified dht);
-    void turnHotZoneRelayOn();
-    void turnHotZoneRelayOff();
-    void turnColdZoneRelayOn();
-    void turnColdZoneRelayOff();
-    Telemetry::TelemteryData climateControl(int hour, int minute, uint32_t now);
+    Telemetry::TelemteryData control(int hour, int minute, uint32_t now);
 }
 
 #endif

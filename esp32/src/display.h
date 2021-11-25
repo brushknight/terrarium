@@ -16,8 +16,10 @@ namespace Display
           Climate::ClimateData hotCenter;
           Climate::ClimateData coldCenter;
           Climate::ClimateData coldSide;
-          bool heater;
-          Climate::HeaterPhase heaterPhase;
+          bool hotZoneHeater;
+          bool coldZoneHeater;
+          Climate::HeaterPhase hotZoneHeaterPhase;
+          Climate::HeaterPhase coldZoneHeaterPhase;
           int hour;
           int minute;
           int second;

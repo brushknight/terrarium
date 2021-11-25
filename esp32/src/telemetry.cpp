@@ -41,8 +41,8 @@ namespace Telemetry
 
         StaticJsonDocument<500> doc;
 
-        doc["heater"] = telemteryData.heater;
-        if (telemteryData.heaterPhase == cooling)
+        doc["heater"] = telemteryData.hotZoneHeater;
+        if (telemteryData.hotZoneHeaterPhase == cooling)
         {
             doc["heater_phase"] = "cooling";
         }

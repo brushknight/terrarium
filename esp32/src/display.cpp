@@ -110,18 +110,16 @@ namespace Display
         lcd.print(floatToString(displayData.coldSide.h));
 
         lcd.setCursor(0, 2);
-        lcd.print("HZ    ");
-        lcd.setCursor(3, 2);
         if (displayData.hotZoneHeater)
         {
-            lcd.print("ON");
+            lcd.print("ON ");
         }
         else
         {
             lcd.print("OFF");
         }
 
-        lcd.setCursor(6, 2);
+        lcd.setCursor(4, 2);
         if (displayData.hotZoneHeaterPhase == Climate::HeaterPhase::cooling)
         {
             lcd.print("cool");
@@ -131,12 +129,10 @@ namespace Display
             lcd.print("heat");
         }
 
-        lcd.setCursor(10, 2);
-        lcd.print("CZ    ");
-        lcd.setCursor(13, 2);
+        lcd.setCursor(12, 2);
         if (displayData.coldZoneHeater)
         {
-            lcd.print("ON");
+            lcd.print("ON ");
         }
         else
         {

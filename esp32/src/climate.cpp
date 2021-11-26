@@ -99,6 +99,13 @@ time in UTC
                 minTemp = nightMinTemp;
             }
 
+            // handle error data
+            if (sensor1.t == 0){
+                sensor1 = sensor2;
+            }else if (sensor2.t == 0){
+                sensor2 = sensor1;
+            }
+
             if (heaterPhase == cooling)
             {
                 if (sensor1.t < maxTemp && sensor2.t < maxTemp)
@@ -144,6 +151,7 @@ time in UTC
         if (isnan(event.temperature))
         {
             Serial.println(F("Error reading temperature!"));
+            data.t = 0;
         }
         else
         {
@@ -157,6 +165,7 @@ time in UTC
         if (isnan(event.relative_humidity))
         {
             Serial.println(F("Error reading humidity!"));
+            data.h = 0;
         }
         else
         {

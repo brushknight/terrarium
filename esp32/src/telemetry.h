@@ -29,14 +29,17 @@ namespace Telemetry
         ClimateData coldCenter;
         ClimateData coldSide;
         ClimateConfig climateConfig;
-        bool heater;
-        HeaterPhase heaterPhase;
+        bool hotZoneHeater;
+        bool coldZoneHeater;
+        HeaterPhase hotZoneHeaterPhase;
+        HeaterPhase coldZoneHeaterPhase;
         bool fullfilled;
         char* version;
         int uptime;
         int hour;
         int minute;
         int second;
+        bool isDay;
     };
 
     void send(TelemteryData telemteryData);

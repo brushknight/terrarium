@@ -31,36 +31,36 @@ namespace Display
 
     void renderSubmissionInfo(bool submission)
     {
-        lcd.setCursor(9, 2);
+        lcd.setCursor(7, 3);
         lcd.print(" ");
         lcd.print(" ");
         if (submission)
         {
-            lcd.setCursor(9, 2);
+            lcd.setCursor(7, 3);
             lcd.print("S");
         }
     }
 
     void renderHarvestInfo(int secondsToNextHarvest)
     {
-        lcd.setCursor(9, 3);
+        lcd.setCursor(5, 3);
         lcd.print(" ");
         lcd.print(" ");
         lcd.print(" ");
-        lcd.setCursor(9, 3);
+        lcd.setCursor(5, 3);
         lcd.print(secondsToNextHarvest);
     }
 
     void renderInfo(int id)
     {
-        lcd.setCursor(4, 3);
+        lcd.setCursor(0, 3);
         lcd.print(" ");
         lcd.print(" ");
         lcd.print(" ");
         lcd.print(" ");
-        lcd.setCursor(4, 3);
+        lcd.setCursor(0, 3);
         lcd.print("ID");
-        lcd.setCursor(6, 3);
+        lcd.setCursor(2, 3);
         lcd.print(id);
     }
 
@@ -110,28 +110,43 @@ namespace Display
         lcd.print(floatToString(displayData.coldSide.h));
 
         lcd.setCursor(0, 2);
-        lcd.print("heater");
-        lcd.setCursor(0, 3);
-        lcd.print(" ");
-        lcd.print(" ");
-        lcd.print(" ");
-        lcd.setCursor(0, 3);
-        if (displayData.heater)
+        if (displayData.hotZoneHeater)
         {
-            lcd.print("ON");
+            lcd.print("ON ");
         }
         else
         {
             lcd.print("OFF");
         }
-        lcd.setCursor(13, 2);
-        if (displayData.heaterPhase == Climate::HeaterPhase::cooling)
+
+        lcd.setCursor(4, 2);
+        if (displayData.hotZoneHeaterPhase == Climate::HeaterPhase::cooling)
         {
-            lcd.print("cooling");
+            lcd.print("cool");
         }
         else
         {
-            lcd.print("heating");
+            lcd.print("heat");
+        }
+
+        lcd.setCursor(12, 2);
+        if (displayData.coldZoneHeater)
+        {
+            lcd.print("ON ");
+        }
+        else
+        {
+            lcd.print("OFF");
+        }
+        
+        lcd.setCursor(16, 2);
+        if (displayData.coldZoneHeaterPhase == Climate::HeaterPhase::cooling)
+        {
+            lcd.print("cool");
+        }
+        else
+        {
+            lcd.print("heat");
         }
     }
 

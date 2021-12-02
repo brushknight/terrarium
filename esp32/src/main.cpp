@@ -1,6 +1,5 @@
 #include "main.h"
 
-using namespace Climate;
 using namespace Lighting;
 using namespace Security;
 using namespace Net;
@@ -55,7 +54,7 @@ void setup()
   //int now = RealTime::getTimestamp();
   int uptime = RealTime::getUptime();
   //securitySetup();
-  climateSetup(uptime);
+  Climate::setup(uptime);
   //ledSetup();
 
   //Encoder::setup();
@@ -69,11 +68,19 @@ void setup()
       NULL               // Task handle
   );
 
+  pinMode(4, OUTPUT);
+
   delay(1000);
 }
 
 void loop()
 {
+  // Serial.println("loop");
+  // digitalWrite(4, HIGH);
+  // delay(10000);
+  // digitalWrite(4, LOW);
+  // delay(1000);
+
   int uptime = RealTime::getUptime();
 
   //Encoder::tick();
@@ -88,7 +95,7 @@ void loop()
 
   if (uptime - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
   {
-    Telemetry::TelemteryData telemteryData = climateControl(RealTime::getHour(), RealTime::getMinute(), uptime);
+    Telemetry::TelemteryData telemteryData = Climate::control(RealTime::getHour(), RealTime::getMinute(), uptime);
     telemteryData.hour = RealTime::getHour();
     telemteryData.minute = RealTime::getMinute();
     telemteryData.second = RealTime::getSecond();
@@ -102,9 +109,10 @@ void loop()
     displayData.hotCenter = telemteryData.hotCenter;
     displayData.coldCenter = telemteryData.coldCenter;
     displayData.coldSide = telemteryData.coldSide;
-    displayData.heater = telemteryData.heater;
-    displayData.heaterPhase = telemteryData.heaterPhase;
-
+    displayData.hotZoneHeater = telemteryData.hotZoneHeater;
+    displayData.coldZoneHeater = telemteryData.coldZoneHeater;
+    displayData.hotZoneHeaterPhase = telemteryData.hotZoneHeaterPhase;
+    displayData.coldZoneHeaterPhase = telemteryData.coldZoneHeaterPhase;
     /*if (now - lastSendingTime >= SENDING_INTERVAL_SEC)
     {
       renderSendTelemetry();

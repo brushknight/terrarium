@@ -3,9 +3,9 @@
 namespace RealTime
 {
 
-    const char *ntpServer1 = "pool.ntp.org";
-    const char *ntpServer2 = "1.europe.pool.ntp.org";
-    const char *ntpServer3 = "2.europe.pool.ntp.org";
+    const char *ntpServer1 = "10.0.0.51";
+    const char *ntpServer2 = "pool.ntp.org";
+    const char *ntpServer3 = "1.europe.pool.ntp.org";
     const long gmtOffset_sec = 3600;  // todo fix this to be +1
     const int daylightOffset_sec = 0; // fix this to accept DST
 
@@ -49,10 +49,6 @@ namespace RealTime
 
             rtc.adjust(mktime(&timeinfo));
         }
-
-        //printLocalTime();
-        //Serial.println("RTC: now");
-        //Serial.println(rtc.now().hour());
     }
 
     void setupWithoutRTC(){
@@ -136,16 +132,6 @@ namespace RealTime
         }
 
         return second;
-    }
-
-    uint32_t getTimestamp()
-    {
-        if (RTC_ENABLED){
-            return rtc.now().secondstime();
-        }else{
-            return 0;
-        }
-        
     }
 
     void printLocalTime()

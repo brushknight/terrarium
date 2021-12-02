@@ -68,11 +68,19 @@ void setup()
       NULL               // Task handle
   );
 
+  pinMode(4, OUTPUT);
+
   delay(1000);
 }
 
 void loop()
 {
+  // Serial.println("loop");
+  // digitalWrite(4, HIGH);
+  // delay(10000);
+  // digitalWrite(4, LOW);
+  // delay(1000);
+
   int uptime = RealTime::getUptime();
 
   //Encoder::tick();

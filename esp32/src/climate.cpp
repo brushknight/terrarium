@@ -29,8 +29,8 @@ time in UTC
 #define DHT_COLD_CENTER_PIN 18 // #3
 #define DHT_COLD_SIDE_PIN 19   // #4
 
-#define DAY_TEMP_TOLERANCE_WARM 0.4
-#define DAY_TEMP_TOLERANCE_COLD 0.7
+#define DAY_TEMP_TOLERANCE_WARM 0
+#define DAY_TEMP_TOLERANCE_COLD 0.2
 
 #define MAX_NULL_READINGS_SEC 30
 
@@ -59,10 +59,14 @@ time in UTC
             nightMaxTemp = nTargetTemp - DAY_TEMP_TOLERANCE_WARM;
             nightMinTemp = nTargetTemp - DAY_TEMP_TOLERANCE_COLD;
             heaterPhase = cooling;
+
+            Serial.println();
+
         }
 
         void turnRelayOn()
         {
+            Serial.println("turn relay on");
             heaterPhase = heating;
 
             if (OLD_SCHEME)
@@ -77,6 +81,7 @@ time in UTC
 
         void turnRelayOff()
         {
+            Serial.println("turn relay off");
             heaterPhase = cooling;
             if (OLD_SCHEME)
             {
@@ -99,16 +104,35 @@ time in UTC
                 minTemp = nightMinTemp;
             }
 
+            float criticalMinTemp = minTemp - 1;
+            float criticalMaxTemp = maxTemp + 1;
+
             // handle error data
-            if (sensor1.t == 0){
+            if (sensor1.t == 0)
+            {
                 sensor1 = sensor2;
-            }else if (sensor2.t == 0){
+            }
+            else if (sensor2.t == 0)
+            {
                 sensor2 = sensor1;
             }
 
+            if (sensor1.t == 0 && sensor2.t == 0)
+            {
+                // dont change anything if data is not harvested
+                return;
+            }
+
+            float tAvg = (sensor1.t + sensor2.t) / 2;
+
+            Serial.print("tAvg: ");
+            Serial.println(tAvg);
+
             if (heaterPhase == cooling)
             {
-                if (sensor1.t < maxTemp && sensor2.t < maxTemp)
+Serial.print("cooling, minTemp: ");
+Serial.println(minTemp);
+                if (tAvg <= minTemp)
                 {
                     turnRelayOn();
                     heaterStatus = true;
@@ -121,7 +145,10 @@ time in UTC
             }
             else
             {
-                if (sensor1.t > minTemp || sensor2.t > minTemp)
+Serial.print("heating, maxTemp: ");
+Serial.println(maxTemp);
+                // heating
+                if (tAvg >= maxTemp)
                 {
                     turnRelayOff();
                     heaterStatus = false;
@@ -131,6 +158,27 @@ time in UTC
                     turnRelayOn();
                     heaterStatus = true;
                 }
+            }
+
+
+
+            // edge cases
+            // too cold
+            if (sensor1.t < criticalMinTemp || sensor2.t < criticalMinTemp)
+            {
+                Serial.println("sensor 1, sensor 2, critical min");
+                Serial.println(sensor1.t);
+                Serial.println(sensor2.t);
+                Serial.println(criticalMinTemp);
+                turnRelayOn();
+                heaterStatus = true;
+            }
+
+            // too hot
+            if (sensor1.t > criticalMaxTemp || sensor2.t > criticalMaxTemp)
+            {
+                turnRelayOff();
+                heaterStatus = false;
             }
         }
     };
@@ -223,10 +271,6 @@ time in UTC
         coldZone.sensor1 = readTempHumid(dhtColdCenter);
         coldZone.sensor2 = readTempHumid(dhtColdSide);
 
-        hotZone.adjust();
-
-        coldZone.adjust();
-
         if ((hotZone.sensor1.t > 0 || hotZone.sensor2.t > 0) && (coldZone.sensor1.t > 0 || coldZone.sensor2.t > 0))
         {
             lastNotNullReadings = uptime;
@@ -236,6 +280,10 @@ time in UTC
         {
             ESP.restart();
         }
+
+        hotZone.adjust();
+
+        coldZone.adjust();
 
         if (DEBUG)
         {

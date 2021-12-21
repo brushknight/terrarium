@@ -2,7 +2,7 @@
 
 namespace Lighting
 {
-#define LEDPIN 14
+#define LEDPIN 23
 #define LED_COUNT 1
 
     int pixelFormat = NEO_GRB + NEO_KHZ800;
@@ -13,11 +13,12 @@ namespace Lighting
     {
         pixels = new Adafruit_NeoPixel(LED_COUNT, LEDPIN, pixelFormat);
         pixels->begin();
+        pixels->setBrightness(50);
     }
 
     void turnLedOn(int r, int g, int b)
     {
-        pixels->clear();
+        //pixels->clear();
 
         for (int i = 0; i < LED_COUNT; i++)
         {

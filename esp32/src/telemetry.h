@@ -24,6 +24,7 @@ namespace Telemetry
     class TelemteryData
     {
     public:
+        int sampleId;
         ClimateData hotSide;
         ClimateData hotCenter;
         ClimateData coldCenter;

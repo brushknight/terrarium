@@ -30,7 +30,7 @@ namespace Telemetry
 
         char telemetryEndpoint[200];
         sprintf(telemetryEndpoint, "http://terrarium.lab/api/v2/telemetry/%d", TERRARIUM_ID);
-        Serial.print(telemetryEndpoint);
+        Serial.println(telemetryEndpoint);
 
         //const char*  TELEMETRY_ENDPOINT = "http://terrarium.lab/api/v1/telemetry";
 

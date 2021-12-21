@@ -18,6 +18,8 @@ namespace RealTime
 
     void setupRtcModule()
     {
+        Serial.println("setupRtcModule");
+
         if (!rtc.begin())
         {
             Serial.println("Couldn't find RTC!");
@@ -28,7 +30,7 @@ namespace RealTime
         if (rtc.lostPower())
         {
 
-            Display::renderNtp(0);
+            //Display::renderNtp(0);
 
             Serial.println("RTC: lost power");
             syncTime();
@@ -40,7 +42,7 @@ namespace RealTime
                 attempts++;
                 Serial.println("Failed to obtain time, retry");
                 syncTime();
-                Display::renderNtp(attempts);
+                //Display::renderNtp(attempts);
                 if (attempts >= 20)
                 {
                     attempts = 0;
@@ -49,6 +51,7 @@ namespace RealTime
 
             rtc.adjust(mktime(&timeinfo));
         }
+        Serial.println("setupRtcModule finished");
     }
 
     void setupWithoutRTC(){

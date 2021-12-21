@@ -59,38 +59,18 @@ time in UTC
             nightMaxTemp = nTargetTemp - DAY_TEMP_TOLERANCE_WARM;
             nightMinTemp = nTargetTemp - DAY_TEMP_TOLERANCE_COLD;
             heaterPhase = cooling;
-
-            Serial.println();
-
         }
 
         void turnRelayOn()
         {
-            Serial.println("turn relay on");
             heaterPhase = heating;
-
-            if (OLD_SCHEME)
-            {
-                digitalWrite(relayPin, LOW); // for old scheme
-            }
-            else
-            {
-                digitalWrite(relayPin, HIGH);
-            }
+            digitalWrite(relayPin, HIGH);
         }
 
         void turnRelayOff()
         {
-            Serial.println("turn relay off");
             heaterPhase = cooling;
-            if (OLD_SCHEME)
-            {
-                digitalWrite(relayPin, HIGH); // for old scheme
-            }
-            else
-            {
-                digitalWrite(relayPin, LOW);
-            }
+            digitalWrite(relayPin, LOW);
         }
 
         void adjust()
@@ -125,13 +105,9 @@ time in UTC
 
             float tAvg = (sensor1.t + sensor2.t) / 2;
 
-            Serial.print("tAvg: ");
-            Serial.println(tAvg);
-
             if (heaterPhase == cooling)
             {
-Serial.print("cooling, minTemp: ");
-Serial.println(minTemp);
+
                 if (tAvg <= minTemp)
                 {
                     turnRelayOn();
@@ -145,8 +121,6 @@ Serial.println(minTemp);
             }
             else
             {
-Serial.print("heating, maxTemp: ");
-Serial.println(maxTemp);
                 // heating
                 if (tAvg >= maxTemp)
                 {
@@ -160,16 +134,10 @@ Serial.println(maxTemp);
                 }
             }
 
-
-
             // edge cases
             // too cold
             if (sensor1.t < criticalMinTemp || sensor2.t < criticalMinTemp)
             {
-                Serial.println("sensor 1, sensor 2, critical min");
-                Serial.println(sensor1.t);
-                Serial.println(sensor2.t);
-                Serial.println(criticalMinTemp);
                 turnRelayOn();
                 heaterStatus = true;
             }
@@ -184,6 +152,7 @@ Serial.println(maxTemp);
     };
 
     int lastNotNullReadings = 0;
+    int sampleId = 0;
 
     DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
     DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
@@ -256,11 +225,6 @@ Serial.println(maxTemp);
     Telemetry::TelemteryData control(int hour, int minute, uint32_t uptime)
     {
 
-        float hotZoneDayTargetTemnp = 28.5;
-        float hotZoneNightTargetTemnp = 23;
-
-        float coldZoneDayNightTargetTemnp = 23;
-
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
 
         hotZone.isDay = isDay;
@@ -282,7 +246,6 @@ Serial.println(maxTemp);
         }
 
         hotZone.adjust();
-
         coldZone.adjust();
 
         if (DEBUG)
@@ -313,6 +276,12 @@ Serial.println(maxTemp);
         // telemetryData.isDay = isDay;
 
         telemetryData.fullfilled = true;
+        telemetryData.hour = hour;
+        telemetryData.minute = minute;
+        telemetryData.uptime = uptime;
+
+        sampleId++;
+        telemetryData.sampleId = sampleId;
 
         return telemetryData;
     }

@@ -1,109 +1,80 @@
 #include "main.h"
 
-using namespace Lighting;
-using namespace Security;
-using namespace Net;
-
-uint32_t delayMS = 100;
-uint32_t lastSensorFetch = 0;
-uint32_t lastTimeRender = 0;
 uint32_t lastTimeReinit = 0;
-uint32_t lastSendingTime = 0;
 Display::DisplayData displayData = Display::DisplayData();
 Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
+
+static portMUX_TYPE display_mutex;
 
 #define HARVESTING_INTERVAL_SEC 5
 #define SUBMISSION_INTERVAL_SEC 30
 #define DISPLAY_REFRESH_INTERVAL 1
 #define DISPLAY_REINIT_INTERVAL 60 * 3
+#define SAMPLE_DUPLICATIONS_COUNT_ALLOWED 3
 
 void submitTelemetry(void *parameter)
 {
-  for (;;)
-  { // infinite loop
 
-    Serial.println("submission started");
-    displayData.submission = true;
-    Telemetry::send(gTelemteryData);
-    displayData.submission = false;
-    Serial.println("submission finished");
+  int lastSampleIdSent = 0;
+  int sampleDuplicationSinceLastSent = 0;
+
+
+  for (;;)
+  {
+    if (lastSampleIdSent != gTelemteryData.sampleId && lastSampleIdSent < gTelemteryData.sampleId)
+    {
+      Serial.println("submission started");
+      displayData.submission = true;
+      Telemetry::send(gTelemteryData);
+      lastSampleIdSent = gTelemteryData.sampleId;
+      displayData.submission = false;
+      Serial.print("submission finished, sample ID: ");
+      Serial.println(lastSampleIdSent);
+    }
+    else
+    {
+      Serial.println("sample already sent");
+      gTelemteryData = Telemetry::TelemteryData();
+      sampleDuplicationSinceLastSent++;
+    }
+
+    if(sampleDuplicationSinceLastSent > SAMPLE_DUPLICATIONS_COUNT_ALLOWED){
+      ESP.restart();
+    }
 
     // Pause before next submission interval
     vTaskDelay(1000 * SUBMISSION_INTERVAL_SEC / portTICK_PERIOD_MS);
   }
 }
 
-void setup()
+void statusLed(void *parameter)
 {
-  Serial.begin(115200);
-
-  if (DISPLAY_ENABLED)
+  for (;;)
   {
-    Display::displaySetup();
-    Display::bootScreen();
+    Lighting::turnLedOn(255,0,0);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    Lighting::turnLedOn(255,69,0);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    Lighting::turnLedOn(255,140,0);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    Lighting::turnLedOn(0,255,0);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    Lighting::turnLedOn(0,0,255);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
-
-  //connect();
-  if (RTC_ENABLED)
-  {
-    RealTime::setupRtcModule();
-  }else{
-    RealTime::setupWithoutRTC();
-  }
-
-  //int now = RealTime::getTimestamp();
-  int uptime = RealTime::getUptime();
-  //securitySetup();
-  Climate::setup(uptime);
-  //ledSetup();
-
-  //Encoder::setup();
-
-  xTaskCreate(
-      submitTelemetry,   // Function that should be called
-      "submitTelemetry", // Name of the task (for debugging)
-      1024 * 10,         // Stack size (bytes)
-      NULL,              // Parameter to pass
-      1,                 // Task priority
-      NULL               // Task handle
-  );
-
-  pinMode(4, OUTPUT);
-
-  delay(1000);
 }
 
-void loop()
-{
-  // Serial.println("loop");
-  // digitalWrite(4, HIGH);
-  // delay(10000);
-  // digitalWrite(4, LOW);
-  // delay(1000);
+void climateControl(void *parameter){
 
   int uptime = RealTime::getUptime();
 
-  //Encoder::tick();
-  //Encoder::isTurn();
-  // turnLedOn(255,0,0);
-
-  if (uptime - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
-  {
-    Display::displaySetup();
-    lastTimeReinit = uptime;
-  }
-
-  if (uptime - lastSensorFetch >= HARVESTING_INTERVAL_SEC)
-  {
+  for (;;){
+    uptime = RealTime::getUptime();
     Telemetry::TelemteryData telemteryData = Climate::control(RealTime::getHour(), RealTime::getMinute(), uptime);
-    telemteryData.hour = RealTime::getHour();
-    telemteryData.minute = RealTime::getMinute();
     telemteryData.second = RealTime::getSecond();
     telemteryData.version = VERSION;
-    telemteryData.uptime = uptime;
 
     gTelemteryData = telemteryData;
-    lastSensorFetch = uptime;
 
     displayData.hotSide = telemteryData.hotSide;
     displayData.hotCenter = telemteryData.hotCenter;
@@ -113,27 +84,107 @@ void loop()
     displayData.coldZoneHeater = telemteryData.coldZoneHeater;
     displayData.hotZoneHeaterPhase = telemteryData.hotZoneHeaterPhase;
     displayData.coldZoneHeaterPhase = telemteryData.coldZoneHeaterPhase;
-    /*if (now - lastSendingTime >= SENDING_INTERVAL_SEC)
-    {
-      renderSendTelemetry();
-      Telemetry::send(telemteryData);
-      lastSendingTime = now;
-    }*/
+
+
+    vTaskDelay(HARVESTING_INTERVAL_SEC * 1000 / portTICK_PERIOD_MS);
   }
+}
+
+void renderDisplay(void *parameter){
+  for (;;){
+    Serial.println("renderDisplay");
+    if (DISPLAY_ENABLED)
+    {
+      displayData.nextHarvestInSec = 0;
+
+      displayData.terrId = TERRARIUM_ID;
+      displayData.hour = RealTime::getHour();
+      displayData.minute = RealTime::getMinute();
+      displayData.second = RealTime::getSecond();
+      //portENTER_CRITICAL(&display_mutex);
+      Display::render(displayData);
+      //portEXIT_CRITICAL(&display_mutex);
+    }
+
+    vTaskDelay(DISPLAY_REFRESH_INTERVAL * 1000 / portTICK_PERIOD_MS);
+  }
+}
+
+void setup()
+{
+  Serial.begin(115200);
+
+  vPortCPUInitializeMutex(&display_mutex);
 
   if (DISPLAY_ENABLED)
   {
-    displayData.nextHarvestInSec = HARVESTING_INTERVAL_SEC - (uptime - lastSensorFetch);
-
-    displayData.terrId = TERRARIUM_ID;
-    displayData.hour = RealTime::getHour();
-    displayData.minute = RealTime::getMinute();
-    displayData.second = RealTime::getSecond();
-
-    if (uptime - lastTimeRender >= DISPLAY_REFRESH_INTERVAL)
-    {
-      Display::render(displayData);
-      lastTimeRender = uptime;
-    }
+    Display::displaySetup();
+    Display::bootScreen();
   }
+
+  if (RTC_ENABLED)
+  {
+    RealTime::setupRtcModule();
+  }
+  else
+  {
+    RealTime::setupWithoutRTC();
+  }
+
+  int uptime = RealTime::getUptime();
+  Climate::setup(uptime);
+
+  xTaskCreatePinnedToCore(
+      submitTelemetry,   
+      "submitTelemetry", 
+      1024 * 10,         
+      NULL,              
+      1,                 
+      NULL,               
+      0
+  );
+
+  Lighting::ledSetup();
+
+  xTaskCreatePinnedToCore(
+    statusLed,   
+    "statusLed", 
+    1024,         
+    NULL,             
+    2,                 
+    NULL,               
+    1
+  );
+
+  xTaskCreatePinnedToCore(
+    renderDisplay,   
+    "renderDisplay", 
+    1024 * 10,         
+    NULL,              
+    2,                 
+    NULL,               
+    1
+  );
+
+  xTaskCreatePinnedToCore(
+    climateControl,   
+    "climateControl", 
+    1024 * 10,         
+    NULL,              
+    3,                 
+    NULL,               
+    0
+  );
+}
+
+void loop()
+{
+  int uptime = RealTime::getUptime();
+
+  if (uptime - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
+  {
+    Display::displaySetup();
+    lastTimeReinit = uptime;
+  }
+
 }

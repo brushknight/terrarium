@@ -2,6 +2,7 @@
 #define TERRARIUM_INCL
 
 #include "climate.h"
+#include "config.h"
 #include "real_time.h"
 #include "net.h"
 #include "telemetry.h"

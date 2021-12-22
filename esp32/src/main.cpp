@@ -176,6 +176,27 @@ void startHttpServer(void *parameter)
             client.print(WIFI_SSID);
             client.print("\n");
 
+            // system info
+            client.print("id ");
+            client.print(TERRARIUM_ID);
+            client.print("\n");
+
+            client.print("version ");
+            client.print(VERSION);
+            client.print("\n");
+
+            client.print("display ");
+            client.print(DISPLAY_ENABLED);
+            client.print("\n");
+
+            client.print("rtc ");
+            client.print(RTC_ENABLED);
+            client.print("\n");
+
+            client.print("sensors_count ");
+            client.print(SENSORS_COUNT);
+            client.print("\n");
+
             // temperature
             client.print("temperature_cold_side ");
             client.print(gTelemteryData.coldSide.t);

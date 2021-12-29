@@ -34,6 +34,8 @@ time in UTC
 
 #define MAX_NULL_READINGS_SEC 30
 
+    DHTStable DHT;
+
     class ClimateZone
     {
     public:
@@ -43,11 +45,19 @@ time in UTC
         int relayPin;
         ClimateData sensor1;
         ClimateData sensor2;
+        int sensor1Pin;
+        int sensor2Pin;
         bool isDay;
         float dayMaxTemp;
         float dayMinTemp;
         float nightMaxTemp;
         float nightMinTemp;
+        // some sensors statistics
+        int successReadsInARow;
+        int errTimeoutsInARow;
+        int errTimeoutCount;
+        int successReadsCount;
+        float successErrRatio;
 
         ClimateZone(bool d, std::string n, int rp, float dTargetTemp, float nTargetTemp)
         {
@@ -73,6 +83,52 @@ time in UTC
             digitalWrite(relayPin, LOW);
         }
 
+        ClimateData readSensor(int pin)
+        {
+            ClimateData data;
+
+            int status = DHT.read22(pin);
+
+            float h = 0;
+            float t = 0;
+
+            switch (status)
+            {
+            case DHTLIB_OK:
+                //counter.ok++;
+                h = DHT.getHumidity();
+                t = DHT.getTemperature();
+                Serial.print("OK,\t");
+                break;
+            case DHTLIB_ERROR_CHECKSUM:
+                //counter.crc_error++;
+                Serial.print("Checksum error,\t");
+                break;
+            case DHTLIB_ERROR_TIMEOUT:
+                //counter.time_out++;
+                Serial.print("Time out error,\t");
+                break;
+            default:
+                //counter.unknown++;
+                Serial.print("Unknown error,\t");
+                break;
+            }
+
+            data.t = t;
+            Serial.print(F("Temperature: "));
+            Serial.print(t);
+            Serial.println(F("°C"));
+
+            data.h = h;
+            Serial.print(F("Humidity: "));
+            Serial.print(h);
+            Serial.println(F("%"));
+
+            data.status = status;
+
+            return data;
+        }
+
         void adjust()
         {
             float maxTemp = dayMaxTemp;
@@ -86,6 +142,9 @@ time in UTC
 
             float criticalMinTemp = minTemp - 1;
             float criticalMaxTemp = maxTemp + 1;
+
+            ClimateData sensor1 = readSensor(sensor1Pin);
+            ClimateData sensor2 = readSensor(sensor2Pin);
 
             // handle error data
             if (sensor1.t == 0)
@@ -154,46 +213,6 @@ time in UTC
     int lastNotNullReadings = 0;
     int sampleId = 0;
 
-    DHT_Unified dhtHotSide(DHT_HOT_SIDE_PIN, DHTTYPE);
-    DHT_Unified dhtHotCenter(DHT_HOT_CENTER_PIN, DHTTYPE);
-    DHT_Unified dhtColdCenter(DHT_COLD_CENTER_PIN, DHTTYPE);
-    DHT_Unified dhtColdSide(DHT_COLD_SIDE_PIN, DHTTYPE);
-
-    ClimateData readTempHumid(DHT_Unified dht)
-    {
-        ClimateData data;
-
-        sensors_event_t event;
-        dht.temperature().getEvent(&event);
-        if (isnan(event.temperature))
-        {
-            Serial.println(F("Error reading temperature!"));
-            data.t = 0;
-        }
-        else
-        {
-            data.t = event.temperature;
-            Serial.print(F("Temperature: "));
-            Serial.print(event.temperature);
-            Serial.println(F("°C"));
-        }
-        // Get humidity event and print its value.
-        dht.humidity().getEvent(&event);
-        if (isnan(event.relative_humidity))
-        {
-            Serial.println(F("Error reading humidity!"));
-            data.h = 0;
-        }
-        else
-        {
-            data.h = event.relative_humidity;
-            Serial.print(F("Humidity: "));
-            Serial.print(event.relative_humidity);
-            Serial.println(F("%"));
-        }
-        return data;
-    }
-
     float hotZoneDayTargetTemnp = 28.5;
     float hotZoneNightTargetTemnp = 23;
 
@@ -214,11 +233,6 @@ time in UTC
         pinMode(HOT_ZONE_HEATER_RELAY_PIN, OUTPUT);
         pinMode(COLD_ZONE_HEATER_RELAY_PIN, OUTPUT);
 
-        dhtHotSide.begin();
-        dhtHotCenter.begin();
-        dhtColdCenter.begin();
-        dhtColdSide.begin();
-
         lastNotNullReadings = uptime;
     }
 
@@ -228,12 +242,18 @@ time in UTC
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
 
         hotZone.isDay = isDay;
-        hotZone.sensor1 = readTempHumid(dhtHotSide);
-        hotZone.sensor2 = readTempHumid(dhtHotCenter);
+        hotZone.sensor1 = hotZone.readSensor(DHT_HOT_SIDE_PIN);
+        hotZone.sensor2 = ClimateData();
 
         coldZone.isDay = isDay;
-        coldZone.sensor1 = readTempHumid(dhtColdCenter);
-        coldZone.sensor2 = readTempHumid(dhtColdSide);
+        coldZone.sensor1 = coldZone.readSensor(DHT_COLD_SIDE_PIN);
+        coldZone.sensor2 = ClimateData();
+
+        if (SENSORS_COUNT == 4)
+        {
+            hotZone.sensor2 = hotZone.readSensor(DHT_HOT_CENTER_PIN);
+            coldZone.sensor2 = coldZone.readSensor(DHT_COLD_CENTER_PIN);
+        }
 
         if ((hotZone.sensor1.t > 0 || hotZone.sensor2.t > 0) && (coldZone.sensor1.t > 0 || coldZone.sensor2.t > 0))
         {
@@ -259,8 +279,8 @@ time in UTC
 
         telemetryData.hotSide = hotZone.sensor1;
         telemetryData.hotCenter = hotZone.sensor2;
-        telemetryData.coldCenter = coldZone.sensor1;
-        telemetryData.coldSide = coldZone.sensor2;
+        telemetryData.coldCenter = coldZone.sensor2;
+        telemetryData.coldSide = coldZone.sensor1;
         telemetryData.hotZoneHeaterPhase = hotZone.heaterPhase;
         telemetryData.coldZoneHeaterPhase = coldZone.heaterPhase;
         telemetryData.hotZoneHeater = hotZone.heaterStatus;

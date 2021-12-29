@@ -4,12 +4,10 @@ uint32_t lastTimeReinit = 0;
 Display::DisplayData displayData = Display::DisplayData();
 Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
 
-static portMUX_TYPE display_mutex;
-
 #define HARVESTING_INTERVAL_SEC 5
 #define SUBMISSION_INTERVAL_SEC 30
 #define DISPLAY_REFRESH_INTERVAL 1
-#define DISPLAY_REINIT_INTERVAL 60 * 3
+#define DISPLAY_REINIT_INTERVAL 60 * 1
 #define SAMPLE_DUPLICATIONS_COUNT_ALLOWED 3
 
 // Set web server port number to 80
@@ -91,7 +89,12 @@ void climateControl(void *parameter)
   for (;;)
   {
     uptime = RealTime::getUptime();
-    Telemetry::TelemteryData telemteryData = Climate::control(RealTime::getHour(), RealTime::getMinute(), uptime);
+    //portENTER_CRITICAL(&display_mutex);
+    int hour = RealTime::getHour();
+    int minute = RealTime::getMinute();
+    //portEXIT_CRITICAL(&display_mutex);
+    Telemetry::TelemteryData telemteryData = Climate::control(hour, minute, uptime);
+    
     telemteryData.second = RealTime::getSecond();
     telemteryData.version = VERSION;
 
@@ -112,11 +115,23 @@ void climateControl(void *parameter)
 
 void renderDisplay(void *parameter)
 {
+
+  int uptime;
+
   for (;;)
   {
     Serial.println("renderDisplay");
     if (DISPLAY_ENABLED)
     {
+
+      uptime = RealTime::getUptime();
+
+      if (uptime - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
+      {
+        Display::displaySetup();
+        lastTimeReinit = uptime;
+      }
+
       displayData.nextHarvestInSec = 0;
 
       displayData.terrId = TERRARIUM_ID;
@@ -277,8 +292,6 @@ void setup()
 {
   Serial.begin(115200);
 
-  vPortCPUInitializeMutex(&display_mutex);
-
   if (DISPLAY_ENABLED)
   {
     Display::displaySetup();
@@ -306,16 +319,19 @@ void setup()
       NULL,
       0);
 
-  Status::setup();
+  if (STATUS_LED_ENABLED)
+  {
+    Status::setup();
 
-  xTaskCreatePinnedToCore(
-      statusLed,
-      "statusLed",
-      1024,
-      NULL,
-      2,
-      NULL,
-      1);
+    xTaskCreatePinnedToCore(
+        statusLed,
+        "statusLed",
+        1024,
+        NULL,
+        1,
+        NULL,
+        1);
+  }
 
   xTaskCreatePinnedToCore(
       renderDisplay,
@@ -335,25 +351,22 @@ void setup()
       NULL,
       0);
 
-  server.begin();
+  if (SERVER_ENABLED)
+  {
+    server.begin();
 
-  xTaskCreatePinnedToCore(
-      startHttpServer,
-      "startHttpServer",
-      1024 * 10,
-      NULL,
-      3,
-      NULL,
-      1);
+    xTaskCreatePinnedToCore(
+        startHttpServer,
+        "startHttpServer",
+        1024 * 10,
+        NULL,
+        3,
+        NULL,
+        1);
+  }
 }
 
 void loop()
 {
-  int uptime = RealTime::getUptime();
-
-  if (uptime - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
-  {
-    Display::displaySetup();
-    lastTimeReinit = uptime;
-  }
+   vTaskDelete(NULL);
 }

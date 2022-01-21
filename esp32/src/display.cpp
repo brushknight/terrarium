@@ -10,11 +10,6 @@ namespace Display
 
     void render(DisplayData displayData)
     {
-        // just do clear?
-        //       clearRow(0);
-        //       clearRow(1);
-        //       clearRow(2);
-        //       clearRow(3);
 
         renderHarvestInfo(displayData.nextHarvestInSec);
         renderClimate(displayData);
@@ -23,10 +18,11 @@ namespace Display
         renderSubmissionInfo(displayData.submission);
     }
 
-    void bootScreen(){
-         lcd.setCursor(0, 0);
-         lcd.print("version: ");
-         lcd.print(VERSION);
+    void bootScreen()
+    {
+        lcd.setCursor(0, 0);
+        lcd.print("version: ");
+        lcd.print(VERSION);
     }
 
     void renderSubmissionInfo(bool submission)
@@ -138,7 +134,7 @@ namespace Display
         {
             lcd.print("OFF");
         }
-        
+
         lcd.setCursor(16, 2);
         if (displayData.coldZoneHeaterPhase == Climate::HeaterPhase::cooling)
         {

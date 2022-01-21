@@ -21,6 +21,7 @@ time in UTC
 #define NIGHT_START_MINUTE 0
 
 #define DHTTYPE DHT22
+#define SENSORS_ENABLE_PIN 32
 #define HOT_ZONE_HEATER_RELAY_PIN 4
 #define COLD_ZONE_HEATER_RELAY_PIN 5
 
@@ -143,8 +144,8 @@ time in UTC
             float criticalMinTemp = minTemp - 1;
             float criticalMaxTemp = maxTemp + 1;
 
-            ClimateData sensor1 = readSensor(sensor1Pin);
-            ClimateData sensor2 = readSensor(sensor2Pin);
+            //ClimateData sensor1 = readSensor(sensor1Pin);
+            //ClimateData sensor2 = readSensor(sensor2Pin);
 
             // handle error data
             if (sensor1.t == 0)
@@ -232,8 +233,26 @@ time in UTC
     {
         pinMode(HOT_ZONE_HEATER_RELAY_PIN, OUTPUT);
         pinMode(COLD_ZONE_HEATER_RELAY_PIN, OUTPUT);
+        pinMode(SENSORS_ENABLE_PIN, OUTPUT);
 
         lastNotNullReadings = uptime;
+    }
+
+    void enableSensors(){
+        digitalWrite(SENSORS_ENABLE_PIN, HIGH);
+    }
+
+    void disableSensors(){
+        digitalWrite(SENSORS_ENABLE_PIN, LOW);
+    }
+
+    int readThermistor(int pin)
+    {
+        THERMISTOR thermistor(pin,    // Analog pin
+                              10000,  // Nominal resistance at 25 ºC
+                              3950,   // thermistor's beta coefficient
+                              10000); // Value of the series resistor
+        return thermistor.read();
     }
 
     Telemetry::TelemteryData control(int hour, int minute, uint32_t uptime)

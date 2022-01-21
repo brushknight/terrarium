@@ -8,7 +8,7 @@
 #include "net.h"
 
 namespace RealTime{
-    void syncTime();
+    void syncTimeWithNTP();
     void setupRtcModule();
     void setupWithoutRTC();
     int getHour();
@@ -16,6 +16,8 @@ namespace RealTime{
     int getSecond();
     void printLocalTime();
     int getUptime();
+    int getBatteryPercent();
+    int getBatteryVoltage();
 }
 
 #endif

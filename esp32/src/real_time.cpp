@@ -27,13 +27,16 @@ namespace RealTime
             abort();
         }
 
+        Serial.print("RTC - power status: ");
+        Serial.println(!rtc.lostPower());
+
         if (rtc.lostPower())
         {
 
             //Display::renderNtp(0);
 
             Serial.println("RTC: lost power");
-            syncTime();
+            syncTimeWithNTP();
 
             struct tm timeinfo;
             int attempts = 0;
@@ -41,7 +44,7 @@ namespace RealTime
             {
                 attempts++;
                 Serial.println("Failed to obtain time, retry");
-                syncTime();
+                syncTimeWithNTP();
                 //Display::renderNtp(attempts);
                 if (attempts >= 20)
                 {
@@ -51,14 +54,24 @@ namespace RealTime
 
             rtc.adjust(mktime(&timeinfo));
         }
+
+        DateTime rtcDateTime = rtc.now();
+
+        struct timeval tv;
+        tv.tv_sec = rtcDateTime.secondstime();
+
+        settimeofday(&tv, NULL);
+
+
         Serial.println("setupRtcModule finished");
     }
 
-    void setupWithoutRTC(){
-        syncTime();
+    void setupWithoutRTC()
+    {
+        syncTimeWithNTP();
     }
 
-    void syncTime()
+    void syncTimeWithNTP()
     {
         Net::connect(true);
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2, ntpServer3);
@@ -74,7 +87,7 @@ namespace RealTime
 
             if (hour > 23)
             {
-                syncTime();
+                syncTimeWithNTP();
                 hour = int(rtc.now().hour());
             }
         }
@@ -171,5 +184,39 @@ namespace RealTime
         strftime(timeWeekDay, 10, "%A", &timeinfo);
         Serial.println(timeWeekDay);
         Serial.println();
+    }
+
+    int getBatteryPercent()
+    {
+
+        float oneMilliVolt = 3300.0 / 4096.0;
+
+        float full = 3000.0 / oneMilliVolt;
+
+        float empty = 2000.0 / oneMilliVolt;
+
+        float current = float(analogRead(33));
+
+        // TODO add check for zero
+        if (full - empty == 0){
+            return 0;
+        }
+
+        float percent = (current - empty) / (full - empty);
+
+        // if (percent > 1)
+        // {
+        //     percent = 1;
+        // }
+
+        return int(percent * 100.0);
+    }
+
+    int getBatteryVoltage()
+    {
+
+        float oneMilliVolt = 3300.0 / 4096.0;
+
+        return int(float(analogRead(33)) * oneMilliVolt);
     }
 }

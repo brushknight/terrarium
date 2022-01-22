@@ -6,6 +6,8 @@
 #include <RTClib.h>
 #include "display.h"
 #include "net.h"
+#include "utils.h"
+#include "status.h"
 
 namespace RealTime
 {
@@ -20,6 +22,7 @@ namespace RealTime
     int getUptimeSec();
     int getBatteryPercent();
     int getBatteryVoltage();
+
 }
 
 #endif

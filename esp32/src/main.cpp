@@ -10,17 +10,17 @@ Telemetry::TelemteryData gTelemteryData = Telemetry::TelemteryData();
 #define DISPLAY_REINIT_INTERVAL 60 * 1
 #define SAMPLE_DUPLICATIONS_COUNT_ALLOWED 3
 
-// // Set web server port number to 80
-// WiFiServer server(80);
-// // Variable to store the HTTP request
-// String header;
+// Set web server port number to 80
+WiFiServer server(80);
+// Variable to store the HTTP request
+String header;
 
-// // Current time
-// unsigned long currentTime = millis();
-// // Previous time
-// unsigned long previousTime = 0;
-// // Define timeout time in milliseconds (example: 2000ms = 2s)
-// const long timeoutTime = 2000;
+// Current time
+unsigned long currentTime = millis();
+// Previous time
+unsigned long previousTime = 0;
+// Define timeout time in milliseconds (example: 2000ms = 2s)
+const long timeoutTime = 2000;
 
 void submitTelemetry(void *parameter)
 {
@@ -61,23 +61,8 @@ void statusLed(void *parameter)
 {
   for (;;)
   {
-    Status::connectingToWifi();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    Status::startHttpServer();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    Status::fetchTime();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    Status::ok();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    Status::warning();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    Status::error();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    Status::handleStatusLed();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 
@@ -148,150 +133,217 @@ void renderDisplay(void *parameter)
   }
 }
 
-// void startHttpServer(void *parameter)
-// {
-//   for (;;)
-//   {
-//     WiFiClient client = server.available(); // Listen for incoming clients
+void startHttpServer(void *parameter)
+{
+  for (;;)
+  {
+    WiFiClient client = server.available(); // Listen for incoming clients
 
-//     if (!client)
-//     {
-//       vTaskDelay(100 * SUBMISSION_INTERVAL_SEC / portTICK_PERIOD_MS);
-//       continue;
-//     }
+    if (!client)
+    {
+      vTaskDelay(100 * SUBMISSION_INTERVAL_SEC / portTICK_PERIOD_MS);
+      continue;
+    }
 
-//     currentTime = millis();
-//     previousTime = currentTime;
-//     Serial.println("New Client."); // print a message out in the serial port
-//     String currentLine = "";       // make a String to hold incoming data from the client
-//     while (client.connected() && currentTime - previousTime <= timeoutTime)
-//     { // loop while the client's connected
-//       currentTime = millis();
-//       if (client.available())
-//       {                         // if there's bytes to read from the client,
-//         char c = client.read(); // read a byte, then
-//         Serial.write(c);        // print it out the serial monitor
-//         header += c;
-//         if (c == '\n')
-//         { // if the byte is a newline character
-//           // if the current line is blank, you got two newline characters in a row.
-//           // that's the end of the client HTTP request, so send a response:
-//           if (currentLine.length() == 0)
-//           {
-//             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-//             // and a content-type so the client knows what's coming, then a blank line:
-//             client.println("HTTP/1.1 200 OK");
-//             client.println("Content-type:text/html");
-//             client.println("Connection: close");
-//             client.println();
+    currentTime = millis();
+    previousTime = currentTime;
+    Serial.println("New Client."); // print a message out in the serial port
+    String currentLine = "";       // make a String to hold incoming data from the client
+    while (client.connected() && currentTime - previousTime <= timeoutTime)
+    { // loop while the client's connected
+      currentTime = millis();
+      if (client.available())
+      {                         // if there's bytes to read from the client,
+        char c = client.read(); // read a byte, then
+        Serial.write(c);        // print it out the serial monitor
+        header += c;
+        if (c == '\n')
+        { // if the byte is a newline character
+          // if the current line is blank, you got two newline characters in a row.
+          // that's the end of the client HTTP request, so send a response:
+          if (currentLine.length() == 0)
+          {
+            // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
+            // and a content-type so the client knows what's coming, then a blank line:
+            client.println("HTTP/1.1 200 OK");
+            client.println("Content-type:text/html");
+            client.println("Connection: close");
+            client.println();
 
-//             // turns the GPIOs on and off
+            // turns the GPIOs on and off
 
-//             // Display the HTML web page
-//             client.print("wifi_network ");
-//             client.print(WIFI_SSID);
-//             client.print("\n");
+            // Display the HTML web page
+            client.print("wifi_network ");
+            client.print(WIFI_SSID);
+            client.print("\n");
 
-//             // system info
-//             client.print("id ");
-//             client.print(TERRARIUM_ID);
-//             client.print("\n");
+            // system info
+            client.print("id ");
+            client.print(TERRARIUM_ID);
+            client.print("\n");
 
-//             client.print("version ");
-//             client.print(VERSION);
-//             client.print("\n");
+            client.print("version ");
+            client.print(VERSION);
+            client.print("\n");
 
-//             client.print("display ");
-//             client.print(DISPLAY_ENABLED);
-//             client.print("\n");
+            client.print("display ");
+            client.print(DISPLAY_ENABLED);
+            client.print("\n");
 
-//             client.print("rtc ");
-//             client.print(RTC_ENABLED);
-//             client.print("\n");
+            client.print("rtc ");
+            client.print(RTC_ENABLED);
+            client.print("\n");
 
-//             client.print("sensors_count ");
-//             client.print(SENSORS_COUNT);
-//             client.print("\n");
+            client.print("sensors_count ");
+            client.print(SENSORS_COUNT);
+            client.print("\n");
 
-//             // temperature
-//             client.print("temperature_cold_side ");
-//             client.print(gTelemteryData.coldSide.t);
-//             client.print("\n");
+            // temperature
+            client.print("temperature_cold_side ");
+            client.print(gTelemteryData.coldSide.t);
+            client.print("\n");
 
-//             client.print("temperature_cold_center ");
-//             client.print(gTelemteryData.coldCenter.t);
-//             client.print("\n");
+            client.print("temperature_cold_center ");
+            client.print(gTelemteryData.coldCenter.t);
+            client.print("\n");
 
-//             client.print("temperature_hot_center ");
-//             client.print(gTelemteryData.hotCenter.t);
-//             client.print("\n");
+            client.print("temperature_hot_center ");
+            client.print(gTelemteryData.hotCenter.t);
+            client.print("\n");
 
-//             client.print("temperature_hot_side ");
-//             client.print(gTelemteryData.hotSide.t);
-//             client.print("\n");
+            client.print("temperature_hot_side ");
+            client.print(gTelemteryData.hotSide.t);
+            client.print("\n");
 
-//             // humidity
-//             client.print("humidity_cold_side ");
-//             client.print(gTelemteryData.coldSide.h);
-//             client.print("\n");
+            // humidity
+            client.print("humidity_cold_side ");
+            client.print(gTelemteryData.coldSide.h);
+            client.print("\n");
 
-//             client.print("humidity_cold_center ");
-//             client.print(gTelemteryData.coldCenter.h);
-//             client.print("\n");
+            client.print("humidity_cold_center ");
+            client.print(gTelemteryData.coldCenter.h);
+            client.print("\n");
 
-//             client.print("humidity_hot_center ");
-//             client.print(gTelemteryData.hotCenter.h);
-//             client.print("\n");
+            client.print("humidity_hot_center ");
+            client.print(gTelemteryData.hotCenter.h);
+            client.print("\n");
 
-//             client.print("humidity_hot_side ");
-//             client.print(gTelemteryData.hotSide.h);
-//             client.print("\n");
+            client.print("humidity_hot_side ");
+            client.print(gTelemteryData.hotSide.h);
+            client.print("\n");
 
-//             // heater status
-//             client.print("hot_zone_heater ");
-//             client.print(gTelemteryData.hotZoneHeater);
-//             client.print("\n");
+            // heater status
+            client.print("hot_zone_heater ");
+            client.print(gTelemteryData.hotZoneHeater);
+            client.print("\n");
 
-//             client.print("cold_zone_heater ");
-//             client.print(gTelemteryData.coldZoneHeater);
-//             client.print("\n");
+            client.print("cold_zone_heater ");
+            client.print(gTelemteryData.coldZoneHeater);
+            client.print("\n");
 
-//             client.print("hot_zone_heater_phase ");
-//             client.print(gTelemteryData.hotZoneHeaterPhase);
-//             client.print("\n");
+            client.print("hot_zone_heater_phase ");
+            client.print(gTelemteryData.hotZoneHeaterPhase);
+            client.print("\n");
 
-//             client.print("cold_zone_heater_phase ");
-//             client.print(gTelemteryData.coldZoneHeaterPhase);
-//             client.print("\n");
+            client.print("cold_zone_heater_phase ");
+            client.print(gTelemteryData.coldZoneHeaterPhase);
+            client.print("\n");
 
-//             // The HTTP response ends with another blank line
-//             client.println();
-//             // Break out of the while loop
-//             break;
-//           }
-//           else
-//           { // if you got a newline, then clear currentLine
-//             currentLine = "";
-//           }
-//         }
-//         else if (c != '\r')
-//         {                   // if you got anything else but a carriage return character,
-//           currentLine += c; // add it to the end of the currentLine
-//         }
-//       }
-//     }
-//     // Clear the header variable
-//     header = "";
-//     // Close the connection
-//     client.stop();
-//     Serial.println("Client disconnected.");
-//     Serial.println("");
-//   }
-// }
+            // The HTTP response ends with another blank line
+            client.println();
+            // Break out of the while loop
+            break;
+          }
+          else
+          { // if you got a newline, then clear currentLine
+            currentLine = "";
+          }
+        }
+        else if (c != '\r')
+        {                   // if you got anything else but a carriage return character,
+          currentLine += c; // add it to the end of the currentLine
+        }
+      }
+    }
+    // Clear the header variable
+    header = "";
+    // Close the connection
+    client.stop();
+    Serial.println("Client disconnected.");
+    Serial.println("");
+  }
+}
 
 void setup()
 {
   Serial.begin(115200);
+
+  if (STATUS_LED_ENABLED)
+  {
+    Status::setup();
+
+    xTaskCreatePinnedToCore(
+        statusLed,
+        "statusLed",
+        1024,
+        NULL,
+        1,
+        NULL,
+        1);
+  }
+
+  if (DISPLAY_ENABLED)
+  {
+    Display::displaySetup();
+    Display::bootScreen();
+
+    xTaskCreatePinnedToCore(
+        renderDisplay,
+        "renderDisplay",
+        1024 * 20,
+        NULL,
+        2,
+        NULL,
+        1);
+  }
+
+  RealTime::setup(RTC_ENABLED);
+
+  int uptime = RealTime::getUptimeSec();
+  Climate::setup(uptime);
+  Climate::enableSensors();
+
+  xTaskCreatePinnedToCore(
+      submitTelemetry,
+      "submitTelemetry",
+      1024 * 10,
+      NULL,
+      1,
+      NULL,
+      0);
+
+  xTaskCreatePinnedToCore(
+      climateControl,
+      "climateControl",
+      1024 * 10,
+      NULL,
+      3,
+      NULL,
+      0);
+
+  if (SERVER_ENABLED)
+  {
+    server.begin();
+
+    xTaskCreatePinnedToCore(
+        startHttpServer,
+        "startHttpServer",
+        1024 * 10,
+        NULL,
+        3,
+        NULL,
+        1);
+  }
 
   if (TEST_BOARD)
   {
@@ -335,73 +387,6 @@ void setup()
 
     return;
   }
-
-  if (DISPLAY_ENABLED)
-  {
-    Display::displaySetup();
-    Display::bootScreen();
-  }
-
-  RealTime::setup(RTC_ENABLED);
-
-  int uptime = RealTime::getUptimeSec();
-  Climate::setup(uptime);
-  Climate::enableSensors();
-
-  xTaskCreatePinnedToCore(
-      submitTelemetry,
-      "submitTelemetry",
-      1024 * 10,
-      NULL,
-      1,
-      NULL,
-      0);
-
-  if (STATUS_LED_ENABLED)
-  {
-    Status::setup();
-
-    xTaskCreatePinnedToCore(
-        statusLed,
-        "statusLed",
-        1024,
-        NULL,
-        1,
-        NULL,
-        1);
-  }
-
-  xTaskCreatePinnedToCore(
-      renderDisplay,
-      "renderDisplay",
-      1024 * 20,
-      NULL,
-      2,
-      NULL,
-      1);
-
-  xTaskCreatePinnedToCore(
-      climateControl,
-      "climateControl",
-      1024 * 10,
-      NULL,
-      3,
-      NULL,
-      0);
-
-  // if (SERVER_ENABLED)
-  // {
-  //   server.begin();
-
-  //   xTaskCreatePinnedToCore(
-  //       startHttpServer,
-  //       "startHttpServer",
-  //       1024 * 10,
-  //       NULL,
-  //       3,
-  //       NULL,
-  //       1);
-  // }
 }
 
 void testDHT(int pin)
@@ -483,7 +468,7 @@ void loop()
     Serial.println("mV");
 
     Serial.println("on");
-    Status::ok();
+    //Status::ok();
     digitalWrite(4, HIGH);
     digitalWrite(5, HIGH);
     digitalWrite(25, HIGH);
@@ -494,15 +479,15 @@ void loop()
     Serial.print(":");
     Serial.println(RealTime::getSecond());
     delay(500);
-    Status::warning();
+    Status::setWarning();
     delay(500);
     Serial.println("off");
-    Status::error();
+    Status::setError();
     digitalWrite(4, LOW);
     digitalWrite(5, LOW);
     digitalWrite(25, LOW);
     delay(500);
-    Status::startHttpServer();
+    Status::setPink();
     delay(500);
   }
   else

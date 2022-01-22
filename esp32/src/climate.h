@@ -7,6 +7,7 @@
 #include "telemetry.h"
 #include "climate_data.h"
 #include "config.h"
+#include "status.h"
 
 namespace Climate
 {

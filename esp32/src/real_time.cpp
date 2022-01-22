@@ -8,6 +8,7 @@ namespace RealTime
     const char *ntpServer3 = "1.europe.pool.ntp.org";
     const long gmtOffset_sec = 3600;  // todo fix this to be +1
     const int daylightOffset_sec = 0; // fix this to accept DST
+    //const char* timezoneNTP = "CET";
 
     // setup(rtc_enabled)
     // syncFromNTP()
@@ -23,6 +24,7 @@ namespace RealTime
 
     void setup(bool rtcEnabled)
     {
+        Status::setFetchingTimeStatus(Status::WORKING);
         Serial.println("RealTime: setup started");
 
         if (rtcEnabled)
@@ -30,21 +32,25 @@ namespace RealTime
             Serial.println("RealTime: RTC enalbed");
             if (!rtc.begin())
             {
+                Status::setFetchingTimeStatus(Status::WARNING);
                 Serial.println("Couldn't find RTC, check wiring!");
                 Serial.flush();
                 syncFromNTP();
                 //abort(); -> only if NTP time failed
+
+                printLocalTime();
+
                 return;
             }
 
             // or rtc time is a shit
             if (!rtc.lostPower())
             {
-                
                 syncFromRTC();
             }
             else
             {
+                Status::setFetchingTimeStatus(Status::WARNING);
                 Serial.println("RealTime: RTC lost power");
                 syncFromNTP();
                 // validate time here
@@ -56,7 +62,10 @@ namespace RealTime
         {
             syncFromNTP();
         }
+        printLocalTime();
         Serial.println("RealTime: setup finished");
+        Utils::log("RealTime: setup finished");
+        Status::setFetchingTimeStatus(Status::IDLE);
     }
 
     void syncFromRTC()
@@ -64,10 +73,24 @@ namespace RealTime
         Serial.println("RealTime: sync from RTC");
         DateTime rtcDateTime = rtc.now();
 
-        struct timeval tv;
-        tv.tv_sec = rtcDateTime.secondstime() + SECONDS_FROM_1970_TO_2000;
+        Serial.print("minutes from RTC: ");
+        Serial.println(rtcDateTime.minute());
 
-        settimeofday(&tv, NULL);
+        struct timeval tv;
+        tv.tv_sec = rtcDateTime.unixtime();
+
+        Serial.print("UNIX timestamp from RTC: ");
+        Serial.println(tv.tv_sec);
+
+        timezone tz_utcPlus1 = {gmtOffset_sec, daylightOffset_sec};
+
+        settimeofday(&tv, &tz_utcPlus1);
+
+        struct timeval tv_set;
+        gettimeofday(&tv_set, &tz_utcPlus1);
+
+        Serial.print("UNIX timestamp set from RTC: ");
+        Serial.println(tv_set.tv_sec);
     }
 
     void syncFromNTP()
@@ -79,6 +102,7 @@ namespace RealTime
         while (!getLocalTime(&timeinfo))
         {
             Serial.println("Failed to obtain time, retry");
+            //configTzTime(timezoneNTP, ntpServer1, ntpServer2, ntpServer3);
             configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2, ntpServer3);
             attempts++;
         }
@@ -90,6 +114,10 @@ namespace RealTime
         struct tm timeinfo;
         if (getLocalTime(&timeinfo))
         {
+
+            Serial.print("minutes saving into RTC: ");
+            Serial.println(timeinfo.tm_min);
+
             rtc.adjust(mktime(&timeinfo));
             return true;
         }
@@ -107,16 +135,25 @@ namespace RealTime
         if (!getLocalTime(&timeinfo))
         {
             Serial.println("Failed to obtain time");
-            abort();
+
+            return 0;
         }
 
         hour = timeinfo.tm_hour;
-
         return hour;
     }
 
     int getMinute()
     {
+
+        // time_t now;
+        // struct tm timeinfo1;
+        // time(&now);
+        // localtime_r(&now, &timeinfo1);
+
+        // Serial.print(">>>>> minutes RTC: ");
+        // Serial.println(timeinfo1.tm_min);
+
         int minute = 0;
 
         struct tm timeinfo;
@@ -156,31 +193,6 @@ namespace RealTime
             return;
         }
         Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-        Serial.print("Day of week: ");
-        Serial.println(&timeinfo, "%A");
-        Serial.print("Month: ");
-        Serial.println(&timeinfo, "%B");
-        Serial.print("Day of Month: ");
-        Serial.println(&timeinfo, "%d");
-        Serial.print("Year: ");
-        Serial.println(&timeinfo, "%Y");
-        Serial.print("Hour: ");
-        Serial.println(&timeinfo, "%H");
-        Serial.print("Hour (12 hour format): ");
-        Serial.println(&timeinfo, "%I");
-        Serial.print("Minute: ");
-        Serial.println(&timeinfo, "%M");
-        Serial.print("Second: ");
-        Serial.println(&timeinfo, "%S");
-
-        Serial.println("Time variables");
-        char timeHour[3];
-        strftime(timeHour, 3, "%H", &timeinfo);
-        Serial.println(timeHour);
-        char timeWeekDay[10];
-        strftime(timeWeekDay, 10, "%A", &timeinfo);
-        Serial.println(timeWeekDay);
-        Serial.println();
     }
 
     int getBatteryPercent()

@@ -7,15 +7,16 @@ namespace Net
     void connect(bool interactive)
     {
 
-        if (WiFi.isConnected()){
+        if (WiFi.isConnected())
+        {
             return;
         }
+
+        Status::setConnectingToWiFiStatus(Status::WORKING);
 
         WiFi.mode(WIFI_STA);
         WiFi.disconnect();
         delay(100);
-
-        
 
         char buffer[100];
         sprintf(buffer, "%s#%d", "Terrarium controller ID", TERRARIUM_ID);
@@ -24,29 +25,57 @@ namespace Net
 
         int attempts = 0;
 
-        //WiFi.config(IPAddress(167772400), IPAddress(167772161), IPAddress(167772160), IPAddress(167772161),IPAddress(167772161));
-
         WiFi.begin(WIFI_SSID, WIFI_PASS);
 
         while (!WiFi.isConnected())
         {
             attempts++;
-            if (interactive){
-            Display::renderConnectingToWifi(WIFI_SSID, attempts);
+            if (interactive)
+            {
+                Display::renderConnectingToWifi(WIFI_SSID, attempts);
             }
-            delay(1 * 1000);
-            Serial.println(WiFi.status());
+            delay(1 * 100);
+
+            Serial.println(statusToString(WiFi.status()));
             if (attempts >= 20)
             {
                 attempts = 0;
-                WiFi.begin(WIFI_SSID, WIFI_PASS);
+                //WiFi.begin(WIFI_SSID, WIFI_PASS);
             }
         }
 
         // you're connected now, so print out the data:
-        Serial.print("You're connected to the network");
-        if (interactive){
-        Display::renderConnectedToWifi(WIFI_SSID);
+        Serial.println("You're connected to the network");
+        Serial.printf("Your IP is: %s\n", WiFi.localIP().toString());
+        Serial.println(WiFi.localIP().toString());
+        if (interactive)
+        {
+            Display::renderConnectedToWifi(WIFI_SSID);
+        }
+        Status::setConnectingToWiFiStatus(Status::IDLE);
+    }
+
+    char *statusToString(int code)
+    {
+        switch (code)
+        {
+        case WL_IDLE_STATUS:
+            return "idle";
+        case WL_NO_SSID_AVAIL:
+            return "no SSID found";
+        case WL_SCAN_COMPLETED:
+            return "scan completed";
+        case WL_CONNECTED:
+            return "connected";
+        case WL_CONNECT_FAILED:
+            return "connection failed";
+        case WL_CONNECTION_LOST:
+            return "connection lost";
+        case WL_DISCONNECTED:
+            return "disconnected";
+
+        default:
+            return "undefined";
         }
     }
 }

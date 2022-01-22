@@ -238,11 +238,13 @@ time in UTC
         lastNotNullReadings = uptime;
     }
 
-    void enableSensors(){
+    void enableSensors()
+    {
         digitalWrite(SENSORS_ENABLE_PIN, HIGH);
     }
 
-    void disableSensors(){
+    void disableSensors()
+    {
         digitalWrite(SENSORS_ENABLE_PIN, LOW);
     }
 
@@ -259,6 +261,10 @@ time in UTC
     {
 
         bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
+
+        bool isWarning = false;
+
+        Status::setClimateStatus(Status::WORKING);
 
         hotZone.isDay = isDay;
         hotZone.sensor1 = hotZone.readSensor(DHT_HOT_SIDE_PIN);
@@ -277,6 +283,12 @@ time in UTC
         if ((hotZone.sensor1.t > 0 || hotZone.sensor2.t > 0) && (coldZone.sensor1.t > 0 || coldZone.sensor2.t > 0))
         {
             lastNotNullReadings = uptime;
+            isWarning = false;
+        }
+        else
+        {
+            Status::setClimateStatus(Status::WARNING);
+            isWarning = true;
         }
 
         if (lastNotNullReadings != 0 && uptime - lastNotNullReadings > MAX_NULL_READINGS_SEC)
@@ -321,6 +333,11 @@ time in UTC
 
         sampleId++;
         telemetryData.sampleId = sampleId;
+
+        if (!isWarning)
+        {
+            Status::setClimateStatus(Status::IDLE);
+        }
 
         return telemetryData;
     }

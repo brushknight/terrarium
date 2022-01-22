@@ -7,15 +7,17 @@
 #include "display.h"
 #include "net.h"
 
-namespace RealTime{
-    void syncTimeWithNTP();
-    void setupRtcModule();
-    void setupWithoutRTC();
+namespace RealTime
+{
+    void setup(bool rtcEnabled);
+    void syncFromRTC();
+    void syncFromNTP();
+    bool saveTimeToRTC();
     int getHour();
     int getMinute();
     int getSecond();
     void printLocalTime();
-    int getUptime();
+    int getUptimeSec();
     int getBatteryPercent();
     int getBatteryVoltage();
 }

@@ -17,6 +17,6 @@
 
 #define SENSORS_ENABLED true
 
-#define TEST_BOARD true
+#define TEST_BOARD false
 
 #endif

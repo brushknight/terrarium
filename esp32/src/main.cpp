@@ -84,11 +84,11 @@ void statusLed(void *parameter)
 void climateControl(void *parameter)
 {
 
-  int uptime = RealTime::getUptime();
+  int uptime = RealTime::getUptimeSec();
 
   for (;;)
   {
-    uptime = RealTime::getUptime();
+    uptime = RealTime::getUptimeSec();
     //portENTER_CRITICAL(&display_mutex);
     int hour = RealTime::getHour();
     int minute = RealTime::getMinute();
@@ -124,7 +124,7 @@ void renderDisplay(void *parameter)
     if (DISPLAY_ENABLED)
     {
 
-      uptime = RealTime::getUptime();
+      uptime = RealTime::getUptimeSec();
 
       if (uptime - lastTimeReinit >= DISPLAY_REINIT_INTERVAL)
       {
@@ -142,7 +142,6 @@ void renderDisplay(void *parameter)
       Serial.printf("%d: ready to render screen\n", uptime);
       Display::render(displayData);
       Serial.printf("%d ready display finished\n", uptime);
-
     }
 
     vTaskDelay(DISPLAY_REFRESH_INTERVAL * 1000 / portTICK_PERIOD_MS);
@@ -316,14 +315,7 @@ void setup()
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
     Serial.printf("The current date/time is: %s", strftime_buf);
 
-    if (RTC_ENABLED)
-    {
-      RealTime::setupRtcModule();
-    }
-    else
-    {
-      RealTime::setupWithoutRTC();
-    }
+    RealTime::setup(RTC_ENABLED);
 
     time(&now);
     localtime_r(&now, &timeinfo);
@@ -336,7 +328,8 @@ void setup()
       Display::bootScreen();
     }
 
-    if (SENSORS_ENABLED){
+    if (SENSORS_ENABLED)
+    {
       Climate::setup(0);
     }
 
@@ -349,16 +342,9 @@ void setup()
     Display::bootScreen();
   }
 
-  if (RTC_ENABLED)
-  {
-    RealTime::setupRtcModule();
-  }
-  else
-  {
-    RealTime::setupWithoutRTC();
-  }
+  RealTime::setup(RTC_ENABLED);
 
-  int uptime = RealTime::getUptime();
+  int uptime = RealTime::getUptimeSec();
   Climate::setup(uptime);
   Climate::enableSensors();
 

@@ -11,7 +11,7 @@
 #define DISPLAY_ENABLED true
 #define RTC_ENABLED true
 
-#define SERVER_ENABLED false
+#define SERVER_ENABLED true
 
 #define STATUS_LED_ENABLED true
 

@@ -172,84 +172,80 @@ void startHttpServer(void *parameter)
             // turns the GPIOs on and off
 
             // Display the HTML web page
-            client.print("wifi_network ");
-            client.print(WIFI_SSID);
-            client.print("\n");
+            // client.print("wifi_network ");
+            // client.print(WIFI_SSID);
+            // client.print("\n");
 
             // system info
-            client.print("id ");
-            client.print(TERRARIUM_ID);
-            client.print("\n");
+            // client.print("id ");
+            // client.print(TERRARIUM_ID);
+            // client.print("\n");
 
-            client.print("version ");
-            client.print(VERSION);
-            client.print("\n");
+            // client.print("version ");
+            // client.print(VERSION);
+            // client.print("\n");
 
-            client.print("display ");
-            client.print(DISPLAY_ENABLED);
-            client.print("\n");
+            // client.print("display ");
+            // client.print(DISPLAY_ENABLED);
+            // client.print("\n");
 
-            client.print("rtc ");
-            client.print(RTC_ENABLED);
-            client.print("\n");
+            // client.print("rtc ");
+            // client.print(RTC_ENABLED);
+            // client.print("\n");
 
-            client.print("sensors_count ");
-            client.print(SENSORS_COUNT);
-            client.print("\n");
+            // client.print("sensors_count ");
+            // client.print(SENSORS_COUNT);
+            // client.print("\n");
+
+            // config
+            client.printf("sensors_count{} %d\n", SENSORS_COUNT);
+            client.printf("rtc{} %d\n", RTC_ENABLED);
+            client.printf("display{} %d\n", DISPLAY_ENABLED);
+            //client.printf("display{} %d\n", DISPLAY_ENABLED);
+            client.printf("id{} %d\n", TERRARIUM_ID);
 
             // temperature
-            client.print("temperature_cold_side ");
-            client.print(gTelemteryData.coldSide.t);
-            client.print("\n");
+            client.printf("temperature_cold_side{} %.2f\n", gTelemteryData.coldSide.t);
+            client.printf("temperature_cold_center{} %.2f\n", gTelemteryData.coldCenter.t);
+            client.printf("temperature_hot_center{} %.2f\n", gTelemteryData.hotCenter.t);
+            client.printf("temperature_hot_side{} %.2f\n", gTelemteryData.hotSide.t);
 
-            client.print("temperature_cold_center ");
-            client.print(gTelemteryData.coldCenter.t);
-            client.print("\n");
+            // // humidity
+            // client.print("humidity_cold_side ");
+            // client.print(gTelemteryData.coldSide.h);
+            // client.print("\n");
 
-            client.print("temperature_hot_center ");
-            client.print(gTelemteryData.hotCenter.t);
-            client.print("\n");
+            // client.print("humidity_cold_center ");
+            // client.print(gTelemteryData.coldCenter.h);
+            // client.print("\n");
 
-            client.print("temperature_hot_side ");
-            client.print(gTelemteryData.hotSide.t);
-            client.print("\n");
+            // client.print("humidity_hot_center ");
+            // client.print(gTelemteryData.hotCenter.h);
+            // client.print("\n");
 
-            // humidity
-            client.print("humidity_cold_side ");
-            client.print(gTelemteryData.coldSide.h);
-            client.print("\n");
+            // client.print("humidity_hot_side ");
+            // client.print(gTelemteryData.hotSide.h);
+            // client.print("\n");
 
-            client.print("humidity_cold_center ");
-            client.print(gTelemteryData.coldCenter.h);
-            client.print("\n");
+            // // heater status
+            // client.print("hot_zone_heater ");
+            // client.print(gTelemteryData.hotZoneHeater);
+            // client.print("\n");
 
-            client.print("humidity_hot_center ");
-            client.print(gTelemteryData.hotCenter.h);
-            client.print("\n");
+            // client.print("cold_zone_heater ");
+            // client.print(gTelemteryData.coldZoneHeater);
+            // client.print("\n");
 
-            client.print("humidity_hot_side ");
-            client.print(gTelemteryData.hotSide.h);
-            client.print("\n");
+            // client.print("hot_zone_heater_phase ");
+            // client.print(gTelemteryData.hotZoneHeaterPhase);
+            // client.print("\n");
 
-            // heater status
-            client.print("hot_zone_heater ");
-            client.print(gTelemteryData.hotZoneHeater);
-            client.print("\n");
-
-            client.print("cold_zone_heater ");
-            client.print(gTelemteryData.coldZoneHeater);
-            client.print("\n");
-
-            client.print("hot_zone_heater_phase ");
-            client.print(gTelemteryData.hotZoneHeaterPhase);
-            client.print("\n");
-
-            client.print("cold_zone_heater_phase ");
-            client.print(gTelemteryData.coldZoneHeaterPhase);
-            client.print("\n");
+            // client.print("cold_zone_heater_phase ");
+            // client.print(gTelemteryData.coldZoneHeaterPhase);
+            // client.print("\n");
 
             // The HTTP response ends with another blank line
-            client.println();
+            //client.println();
             // Break out of the while loop
             break;
           }
@@ -332,6 +328,7 @@ void setup()
 
   if (SERVER_ENABLED)
   {
+    Net::connect(true);
     server.begin();
 
     xTaskCreatePinnedToCore(

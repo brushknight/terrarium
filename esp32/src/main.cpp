@@ -105,7 +105,6 @@ void renderDisplay(void *parameter)
 
   for (;;)
   {
-    Serial.println("renderDisplay");
     if (DISPLAY_ENABLED)
     {
 

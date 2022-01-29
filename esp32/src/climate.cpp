@@ -22,13 +22,13 @@ time in UTC
 
 #define DHTTYPE DHT22
 #define SENSORS_ENABLE_PIN 32
-#define HOT_ZONE_HEATER_RELAY_PIN 4
-#define COLD_ZONE_HEATER_RELAY_PIN 5
+#define HOT_ZONE_HEATER_RELAY_PIN 5
+#define COLD_ZONE_HEATER_RELAY_PIN 25
 
-#define DHT_HOT_SIDE_PIN 16    // #1
-#define DHT_HOT_CENTER_PIN 17  // #2
-#define DHT_COLD_CENTER_PIN 18 // #3
-#define DHT_COLD_SIDE_PIN 19   // #4
+#define DHT_HOT_SIDE_PIN int(16)    // #1
+#define DHT_HOT_CENTER_PIN int(17)  // #2
+#define DHT_COLD_CENTER_PIN int(18) // #3
+#define DHT_COLD_SIDE_PIN int(19)   // #4
 
 #define DAY_TEMP_TOLERANCE_WARM 0
 #define DAY_TEMP_TOLERANCE_COLD 0.2
@@ -37,6 +37,105 @@ time in UTC
 
     DHTStable DHT;
 
+    class DHT22CustomSensor
+    {
+    public:
+        int pin;
+        ClimateData current;
+        ClimateData previous;
+        // just for statistics
+        int errorsInARow = 0;
+        int succesfulReadingsCountInARow = 0;
+
+        DHT22CustomSensor()
+        {
+        }
+
+        DHT22CustomSensor(int p)
+        {
+            pin = p;
+        }
+
+        bool success()
+        {
+            return current.status == DHTLIB_OK;
+        }
+
+        bool isSet()
+        {
+            return pin > 0;
+        }
+
+        ClimateData getCurrent()
+        {
+
+            if (!isSet())
+            {
+                return ClimateData(0, 0, DHTLIB_ERROR_TIMEOUT);
+            }
+
+            return current;
+        }
+
+        bool read()
+        {
+            Serial.printf("[pin:%d] reading sensor\n", pin);
+
+            Status::setClimateStatus(Status::WORKING);
+
+            if (pin == 0)
+            {
+                Serial.printf("[pin:%d] sensor disabled\n", pin);
+                return false;
+            }
+
+            int status = DHT.read22(pin);
+
+            switch (status)
+            {
+            case DHTLIB_OK:
+                previous = current;
+
+                current.h = DHT.getHumidity();
+                current.t = DHT.getTemperature();
+
+                // TODO check for data error (more than X% in x Seconds)
+
+                Serial.printf("[pin:%d] Temperature: %.2f°C\n", pin, current.t);
+                Serial.printf("[pin:%d] Humidity: %.2f%%\n", pin, current.h);
+                current.status = status;
+                Status::setClimateStatus(Status::SUCCESS);
+                return true;
+            case DHTLIB_ERROR_CHECKSUM:
+                //counter.crc_error++;
+                Serial.printf("[pin:%d] Checksum error,\n", pin);
+                current.h = 0;
+                current.t = 0;
+                current.status = status;
+                Status::setClimateStatus(Status::WARNING);
+                return false;
+            case DHTLIB_ERROR_TIMEOUT:
+                //counter.time_out++;
+                Serial.printf("[pin:%d] Time out error,\n", pin);
+                current.h = 0;
+                current.t = 0;
+                current.status = status;
+                Status::setClimateStatus(Status::WARNING);
+                return false;
+            default:
+                //counter.unknown++;
+                Serial.printf("[pin:%d] Unknown error,\n", pin);
+                current.h = 0;
+                current.t = 0;
+                current.status = status;
+                Status::setClimateStatus(Status::WARNING);
+                return false;
+            }
+
+            return false;
+        }
+    };
+
     class ClimateZone
     {
     public:
@@ -44,8 +143,8 @@ time in UTC
         HeaterPhase heaterPhase;
         bool heaterStatus;
         int relayPin;
-        ClimateData sensor1;
-        ClimateData sensor2;
+        DHT22CustomSensor sensor1;
+        DHT22CustomSensor sensor2;
         int sensor1Pin;
         int sensor2Pin;
         bool isDay;
@@ -60,11 +159,15 @@ time in UTC
         int successReadsCount;
         float successErrRatio;
 
-        ClimateZone(bool d, std::string n, int rp, float dTargetTemp, float nTargetTemp)
+        ClimateZone() {}
+
+        ClimateZone(bool d, std::string n, int sensor1Pin, int sensor2Pin, int rp, float dTargetTemp, float nTargetTemp)
         {
             isDay = d;
             name = n;
             relayPin = rp;
+            sensor1 = DHT22CustomSensor(sensor1Pin);
+            sensor2 = DHT22CustomSensor(sensor2Pin);
             dayMaxTemp = dTargetTemp - DAY_TEMP_TOLERANCE_WARM;
             dayMinTemp = dTargetTemp - DAY_TEMP_TOLERANCE_COLD;
             nightMaxTemp = nTargetTemp - DAY_TEMP_TOLERANCE_WARM;
@@ -84,52 +187,6 @@ time in UTC
             digitalWrite(relayPin, LOW);
         }
 
-        ClimateData readSensor(int pin)
-        {
-            ClimateData data;
-
-            int status = DHT.read22(pin);
-
-            float h = 0;
-            float t = 0;
-
-            switch (status)
-            {
-            case DHTLIB_OK:
-                //counter.ok++;
-                h = DHT.getHumidity();
-                t = DHT.getTemperature();
-                Serial.print("OK,\t");
-                break;
-            case DHTLIB_ERROR_CHECKSUM:
-                //counter.crc_error++;
-                Serial.print("Checksum error,\t");
-                break;
-            case DHTLIB_ERROR_TIMEOUT:
-                //counter.time_out++;
-                Serial.print("Time out error,\t");
-                break;
-            default:
-                //counter.unknown++;
-                Serial.print("Unknown error,\t");
-                break;
-            }
-
-            data.t = t;
-            Serial.print(F("Temperature: "));
-            Serial.print(t);
-            Serial.println(F("°C"));
-
-            data.h = h;
-            Serial.print(F("Humidity: "));
-            Serial.print(h);
-            Serial.println(F("%"));
-
-            data.status = status;
-
-            return data;
-        }
-
         void adjust()
         {
             float maxTemp = dayMaxTemp;
@@ -147,23 +204,54 @@ time in UTC
             //ClimateData sensor1 = readSensor(sensor1Pin);
             //ClimateData sensor2 = readSensor(sensor2Pin);
 
-            // handle error data
-            if (sensor1.t == 0)
+            if (sensor1.isSet())
             {
-                sensor1 = sensor2;
+                int retryAttempt = 0;
+                while (!sensor1.read() && retryAttempt < MAX_SENSOR_RETRY)
+                {
+                    rebootSensorsWithWait();
+                    retryAttempt++;
+                }
+
+                // handle error correction
+
+                // if(!sensor1.success()){
+                //     ESP.restart();
+                // }
             }
-            else if (sensor2.t == 0)
+            if (sensor2.isSet())
             {
-                sensor2 = sensor1;
+                int retryAttempt = 0;
+                while (!sensor2.read() && retryAttempt < MAX_SENSOR_RETRY)
+                {
+                    rebootSensorsWithWait();
+                    retryAttempt++;
+                }
+
+                // handle error correction
+
+                // if(!sensor1.success()){
+                //     ESP.restart();
+                // }
             }
 
-            if (sensor1.t == 0 && sensor2.t == 0)
-            {
-                // dont change anything if data is not harvested
-                return;
-            }
+            // // handle error data
+            // if (sensor1.current.t == 0)
+            // {
+            //     sensor1 = sensor2;
+            // }
+            // else if (sensor2.current.t == 0)
+            // {
+            //     sensor2 = sensor1;
+            // }
 
-            float tAvg = (sensor1.t + sensor2.t) / 2;
+            // if (sensor1.current.t == 0 && sensor2.current.t == 0)
+            // {
+            //     // dont change anything if data is not harvested
+            //     return;
+            // }
+
+            float tAvg = (sensor1.current.t + sensor2.current.t) / 2;
 
             if (heaterPhase == cooling)
             {
@@ -196,14 +284,14 @@ time in UTC
 
             // edge cases
             // too cold
-            if (sensor1.t < criticalMinTemp || sensor2.t < criticalMinTemp)
+            if (sensor1.current.t < criticalMinTemp || sensor2.current.t < criticalMinTemp)
             {
                 turnRelayOn();
                 heaterStatus = true;
             }
 
             // too hot
-            if (sensor1.t > criticalMaxTemp || sensor2.t > criticalMaxTemp)
+            if (sensor1.current.t > criticalMaxTemp || sensor2.current.t > criticalMaxTemp)
             {
                 turnRelayOff();
                 heaterStatus = false;
@@ -219,15 +307,8 @@ time in UTC
 
     float coldZoneDayNightTargetTemnp = 23;
 
-    ClimateZone hotZone = ClimateZone(
-        false, "hot zone", HOT_ZONE_HEATER_RELAY_PIN,
-        hotZoneDayTargetTemnp,
-        hotZoneNightTargetTemnp);
-
-    ClimateZone coldZone = ClimateZone(
-        false, "cold zone", COLD_ZONE_HEATER_RELAY_PIN,
-        coldZoneDayNightTargetTemnp,
-        coldZoneDayNightTargetTemnp);
+    ClimateZone hotZone;
+    ClimateZone coldZone;
 
     void setup(uint32_t uptime)
     {
@@ -235,7 +316,61 @@ time in UTC
         pinMode(COLD_ZONE_HEATER_RELAY_PIN, OUTPUT);
         pinMode(SENSORS_ENABLE_PIN, OUTPUT);
 
+        if (SENSORS_COUNT == 2)
+        {
+            hotZone = ClimateZone(
+                false, "hot zone",
+                DHT_HOT_SIDE_PIN,
+                0,
+                HOT_ZONE_HEATER_RELAY_PIN,
+
+                hotZoneDayTargetTemnp,
+                hotZoneNightTargetTemnp);
+
+            coldZone = ClimateZone(
+                false, "cold zone",
+                DHT_COLD_SIDE_PIN,
+                0,
+                COLD_ZONE_HEATER_RELAY_PIN,
+
+                coldZoneDayNightTargetTemnp,
+                coldZoneDayNightTargetTemnp);
+        }
+        else if (SENSORS_COUNT == 4)
+        {
+            if (SENSORS_COUNT == 2)
+            {
+                hotZone = ClimateZone(
+                    false, "hot zone",
+
+                    DHT_HOT_SIDE_PIN,
+                    DHT_HOT_CENTER_PIN,
+                    HOT_ZONE_HEATER_RELAY_PIN,
+                    hotZoneDayTargetTemnp,
+                    hotZoneNightTargetTemnp);
+
+                coldZone = ClimateZone(
+                    false, "cold zone",
+
+                    DHT_COLD_SIDE_PIN,
+                    DHT_COLD_CENTER_PIN,
+                    COLD_ZONE_HEATER_RELAY_PIN,
+                    coldZoneDayNightTargetTemnp,
+                    coldZoneDayNightTargetTemnp);
+            }
+        }
+
         lastNotNullReadings = uptime;
+    }
+
+    void rebootSensorsWithWait()
+    {
+        Status::setClimateStatus(Status::WARNING);
+        disableSensors();
+        delay(100);
+        enableSensors();
+        delay(3000); // wait for sensros to boot
+        Status::setClimateStatus(Status::IDLE);
     }
 
     void enableSensors()
@@ -250,54 +385,44 @@ time in UTC
 
     int readThermistor(int pin)
     {
-        THERMISTOR thermistor(pin,    // Analog pin
-                              10000,  // Nominal resistance at 25 ºC
-                              3950,   // thermistor's beta coefficient
-                              10000); // Value of the series resistor
+        THERMISTOR thermistor(
+            pin,    // Analog pin
+            10000,  // Nominal resistance at 25 ºC
+            3950,   // thermistor's beta coefficient
+            10000); // Value of the series resistor
         return thermistor.read();
     }
 
     Telemetry::TelemteryData control(int hour, int minute, uint32_t uptime)
     {
 
-        bool isDay = hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
-
-        bool isWarning = false;
-
         Status::setClimateStatus(Status::WORKING);
 
-        hotZone.isDay = isDay;
-        hotZone.sensor1 = hotZone.readSensor(DHT_HOT_SIDE_PIN);
-        hotZone.sensor2 = ClimateData();
+        bool isDayNow = isDay(hour, minute);
+        bool isWarning = false;
 
-        coldZone.isDay = isDay;
-        coldZone.sensor1 = coldZone.readSensor(DHT_COLD_SIDE_PIN);
-        coldZone.sensor2 = ClimateData();
-
-        if (SENSORS_COUNT == 4)
-        {
-            hotZone.sensor2 = hotZone.readSensor(DHT_HOT_CENTER_PIN);
-            coldZone.sensor2 = coldZone.readSensor(DHT_COLD_CENTER_PIN);
-        }
-
-        if ((hotZone.sensor1.t > 0 || hotZone.sensor2.t > 0) && (coldZone.sensor1.t > 0 || coldZone.sensor2.t > 0))
-        {
-            lastNotNullReadings = uptime;
-            isWarning = false;
-        }
-        else
-        {
-            Status::setClimateStatus(Status::WARNING);
-            isWarning = true;
-        }
-
-        if (lastNotNullReadings != 0 && uptime - lastNotNullReadings > MAX_NULL_READINGS_SEC)
-        {
-            ESP.restart();
-        }
+        hotZone.isDay = isDayNow;
+        coldZone.isDay = isDayNow;
 
         hotZone.adjust();
         coldZone.adjust();
+
+        // // rewrite this to move into climateZone
+        // if ((hotZone.sensor1.current.t > 0 || hotZone.sensor2.current.t > 0) && (coldZone.sensor1.current.t > 0 || coldZone.sensor2.current.t > 0))
+        // {
+        //     lastNotNullReadings = uptime;
+        //     isWarning = false;
+        // }
+        // else
+        // {
+        //     Status::setClimateStatus(Status::WARNING);
+        //     isWarning = true;
+        // }
+
+        // if (lastNotNullReadings != 0 && uptime - lastNotNullReadings > MAX_NULL_READINGS_SEC)
+        // {
+        //     ESP.restart();
+        // }
 
         if (DEBUG)
         {
@@ -308,10 +433,11 @@ time in UTC
 
         Telemetry::TelemteryData telemetryData = Telemetry::TelemteryData();
 
-        telemetryData.hotSide = hotZone.sensor1;
-        telemetryData.hotCenter = hotZone.sensor2;
-        telemetryData.coldCenter = coldZone.sensor2;
-        telemetryData.coldSide = coldZone.sensor1;
+        telemetryData.hotCenter = hotZone.sensor2.getCurrent();
+        telemetryData.hotSide = hotZone.sensor1.getCurrent();
+        telemetryData.coldSide = coldZone.sensor1.getCurrent();
+        telemetryData.coldCenter = coldZone.sensor2.getCurrent();
+
         telemetryData.hotZoneHeaterPhase = hotZone.heaterPhase;
         telemetryData.coldZoneHeaterPhase = coldZone.heaterPhase;
         telemetryData.hotZoneHeater = hotZone.heaterStatus;
@@ -324,7 +450,7 @@ time in UTC
         // telemetryData.climateConfig.nightTempToleranceWarm = NIGHT_TEMP_TOLERANCE_WARM;
         // telemetryData.climateConfig.nightTempToleranceCold = NIGHT_TEMP_TOLERANCE_COLD;
 
-        // telemetryData.isDay = isDay;
+        // telemetryData.isDay = isDayNow;
 
         telemetryData.fullfilled = true;
         telemetryData.hour = hour;
@@ -340,5 +466,10 @@ time in UTC
         }
 
         return telemetryData;
+    }
+
+    bool isDay(int hour, int minute)
+    {
+        return hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR && minute >= DAY_START_MINUTE;
     }
 }

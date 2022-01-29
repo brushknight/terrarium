@@ -10,6 +10,13 @@ namespace Climate
         float t;
         float h;
         int status;
+        ClimateData(){};
+        ClimateData(float temp, float humid, int st)
+        {
+            t = temp;
+            h = humid;
+            status = st;
+        };
     };
 
     enum HeaterPhase

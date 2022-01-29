@@ -123,6 +123,7 @@ namespace RealTime
         }
         else
         {
+            Serial.print("Failed to flash RTC");
             return false;
         }
     }
@@ -134,7 +135,7 @@ namespace RealTime
         struct tm timeinfo;
         if (!getLocalTime(&timeinfo))
         {
-            Serial.println("Failed to obtain time");
+            Serial.println("getHour() Failed to obtain time");
 
             return 0;
         }
@@ -159,7 +160,7 @@ namespace RealTime
         struct tm timeinfo;
         if (!getLocalTime(&timeinfo))
         {
-            Serial.println("Failed to obtain time");
+            Serial.println("getMinute() Failed to obtain time");
             abort();
         }
 
@@ -175,7 +176,7 @@ namespace RealTime
         struct tm timeinfo;
         if (!getLocalTime(&timeinfo))
         {
-            Serial.println("Failed to obtain time");
+            Serial.println("getSecond() Failed to obtain time");
             abort();
         }
 
@@ -189,7 +190,7 @@ namespace RealTime
         struct tm timeinfo;
         if (!getLocalTime(&timeinfo))
         {
-            Serial.println("Failed to obtain time");
+            Serial.println("printLocalTime() Failed to obtain time");
             return;
         }
         Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");

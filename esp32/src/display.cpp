@@ -10,6 +10,10 @@ namespace Display
 
     void render(DisplayData displayData)
     {
+        Serial.printf(">>>>> hotSide %.2f\n", displayData.hotSide.t);
+        Serial.printf(">>>>> hotCenter %.2f\n", displayData.hotCenter.t);
+        Serial.printf(">>>>> coldCenter %.2f\n", displayData.coldCenter.t);
+        Serial.printf(">>>>> coldSide %.2f\n", displayData.coldSide.t);
 
         renderHarvestInfo(displayData.nextHarvestInSec);
         renderClimate(displayData);

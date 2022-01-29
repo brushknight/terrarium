@@ -2,9 +2,9 @@
 #define CONFIG
 
 #define SENSORS_COUNT 2
-#define TERRARIUM_ID 10
+#define TERRARIUM_ID 100
 
-#define VERSION "v2.3.3-dev"
+#define VERSION "v2.3.4-dev"
 
 #define DEBUG false
 
@@ -18,5 +18,7 @@
 #define SENSORS_ENABLED true
 
 #define TEST_BOARD false
+
+#define MAX_SENSOR_RETRY 3
 
 #endif

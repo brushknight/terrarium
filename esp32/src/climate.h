@@ -18,6 +18,8 @@ namespace Climate
     Telemetry::TelemteryData control(int hour, int minute, uint32_t now);
     void enableSensors();
     void disableSensors();
+    void rebootSensorsWithWait();
+    bool isDay(int hour, int minute);
 }
 
 #endif

@@ -162,12 +162,15 @@ void startHttpServer(void *parameter)
           // that's the end of the client HTTP request, so send a response:
           if (currentLine.length() == 0)
           {
+
+            handlePrometheousEndpoint(client, gTelemteryData);
+
             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
             // and a content-type so the client knows what's coming, then a blank line:
-            client.println("HTTP/1.1 200 OK");
-            client.println("Content-type:text/html");
-            client.println("Connection: close");
-            client.println();
+            // client.println("HTTP/1.1 200 OK");
+            // client.println("Content-type:text/html");
+            // client.println("Connection: close");
+            // client.println();
 
             // turns the GPIOs on and off
 
@@ -198,17 +201,17 @@ void startHttpServer(void *parameter)
             // client.print("\n");
 
             // config
-            client.printf("sensors_count{} %d\n", SENSORS_COUNT);
-            client.printf("rtc{} %d\n", RTC_ENABLED);
-            client.printf("display{} %d\n", DISPLAY_ENABLED);
-            //client.printf("display{} %d\n", DISPLAY_ENABLED);
-            client.printf("id{} %d\n", TERRARIUM_ID);
+            // client.printf("sensors_count{} %d\n", SENSORS_COUNT);
+            // client.printf("rtc{} %d\n", RTC_ENABLED);
+            // client.printf("display{} %d\n", DISPLAY_ENABLED);
+            // //client.printf("display{} %d\n", DISPLAY_ENABLED);
+            // client.printf("id{} %d\n", TERRARIUM_ID);
 
             // temperature
-            client.printf("temperature_cold_side{} %.2f\n", gTelemteryData.coldSide.t);
-            client.printf("temperature_cold_center{} %.2f\n", gTelemteryData.coldCenter.t);
-            client.printf("temperature_hot_center{} %.2f\n", gTelemteryData.hotCenter.t);
-            client.printf("temperature_hot_side{} %.2f\n", gTelemteryData.hotSide.t);
+            // client.printf("temperature_cold_side{} %.2f\n", gTelemteryData.coldSide.t);
+            // client.printf("temperature_cold_center{} %.2f\n", gTelemteryData.coldCenter.t);
+            // client.printf("temperature_hot_center{} %.2f\n", gTelemteryData.hotCenter.t);
+            // client.printf("temperature_hot_side{} %.2f\n", gTelemteryData.hotSide.t);
 
             // // humidity
             // client.print("humidity_cold_side ");

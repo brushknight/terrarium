@@ -12,7 +12,7 @@ namespace Telemetry
 
     class ClimateConfig
     {
-        public:
+    public:
         float dayMaxTemp;
         float nightMaxTemp;
         float dayTempToleranceWarm;
@@ -35,7 +35,7 @@ namespace Telemetry
         HeaterPhase hotZoneHeaterPhase;
         HeaterPhase coldZoneHeaterPhase;
         bool fullfilled;
-        char* version;
+        char *version;
         int uptime;
         int hour;
         int minute;
@@ -43,6 +43,7 @@ namespace Telemetry
         bool isDay;
     };
 
+    void handlePrometheousEndpoint(WiFiClient client, TelemteryData gTelemteryData);
     void send(TelemteryData telemteryData);
 
 }

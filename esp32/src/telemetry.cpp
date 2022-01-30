@@ -5,6 +5,32 @@
 
 namespace Telemetry
 {
+
+    void handlePrometheousEndpoint(WiFiClient client, TelemteryData gTelemteryData)
+    {
+        client.println("HTTP/1.1 200 OK");
+        client.println("Content-type:text/html");
+        client.println("Connection: close");
+        client.println();
+
+        // config
+        client.printf("sensors_count{} %d\n", SENSORS_COUNT);
+        client.printf("rtc{} %d\n", RTC_ENABLED);
+        client.printf("display{} %d\n", DISPLAY_ENABLED);
+        //client.printf("display{} %d\n", DISPLAY_ENABLED);
+        client.printf("id{} %d\n", TERRARIUM_ID);
+
+        // temperature
+        client.printf("temperature_cold_side{} %.2f\n", gTelemteryData.coldSide.t);
+        client.printf("temperature_cold_center{} %.2f\n", gTelemteryData.coldCenter.t);
+        client.printf("temperature_hot_center{} %.2f\n", gTelemteryData.hotCenter.t);
+        client.printf("temperature_hot_side{} %.2f\n", gTelemteryData.hotSide.t);
+    }
+
+    void handleJSONEndpoint(WiFiClient client, TelemteryData gTelemteryData){
+        
+    }
+
     void send(TelemteryData telemteryData)
     {
 

@@ -32,12 +32,15 @@ namespace Net
             attempts++;
             if (interactive)
             {
-                Display::renderConnectingToWifi(WIFI_SSID, attempts);
+                if (attempts % 10 == 0)
+                {
+                    Display::renderConnectingToWifi(WIFI_SSID, attempts / 10);
+                }
             }
             delay(1 * 100);
 
             Serial.println(statusToString(WiFi.status()));
-            if (attempts >= 20)
+            if (attempts >= 200)
             {
                 attempts = 0;
                 //WiFi.begin(WIFI_SSID, WIFI_PASS);

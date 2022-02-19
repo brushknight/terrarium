@@ -24,6 +24,7 @@ time in UTC
 #define SENSORS_ENABLE_PIN 32
 #define HOT_ZONE_HEATER_RELAY_PIN 4
 #define COLD_ZONE_HEATER_RELAY_PIN 25
+#define LAMP_RELAY_PIN 5
 
 #define DHT_HOT_SIDE_PIN int(16)    // #1
 #define DHT_HOT_CENTER_PIN int(17)  // #2
@@ -314,7 +315,9 @@ time in UTC
     {
         pinMode(HOT_ZONE_HEATER_RELAY_PIN, OUTPUT);
         pinMode(COLD_ZONE_HEATER_RELAY_PIN, OUTPUT);
+        pinMode(LAMP_RELAY_PIN, OUTPUT);
         pinMode(SENSORS_ENABLE_PIN, OUTPUT);
+        digitalWrite(LAMP_RELAY_PIN, LOW);
 
         if (SENSORS_COUNT == 2)
         {

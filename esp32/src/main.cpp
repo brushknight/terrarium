@@ -331,7 +331,7 @@ void setup()
 
   if (SERVER_ENABLED)
   {
-    Net::connect(true);
+    Net::connect(false);
     server.begin();
 
     xTaskCreatePinnedToCore(

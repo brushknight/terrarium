@@ -79,18 +79,25 @@ namespace RealTime
         struct timeval tv;
         tv.tv_sec = rtcDateTime.unixtime();
 
-        Serial.print("UNIX timestamp from RTC: ");
-        Serial.println(tv.tv_sec);
+        if (tv.tv_sec < 1644065211)
+        { // Sat, 05 Feb 2022 12:46:48 GMT
+            syncFromNTP();
+        }
+        else
+        {
+            Serial.print("UNIX timestamp from RTC: ");
+            Serial.println(tv.tv_sec);
 
-        timezone tz_utcPlus1 = {gmtOffset_sec, daylightOffset_sec};
+            timezone tz_utcPlus1 = {gmtOffset_sec, daylightOffset_sec};
 
-        settimeofday(&tv, &tz_utcPlus1);
+            settimeofday(&tv, &tz_utcPlus1);
 
-        struct timeval tv_set;
-        gettimeofday(&tv_set, &tz_utcPlus1);
+            struct timeval tv_set;
+            gettimeofday(&tv_set, &tz_utcPlus1);
 
-        Serial.print("UNIX timestamp set from RTC: ");
-        Serial.println(tv_set.tv_sec);
+            Serial.print("UNIX timestamp set from RTC: ");
+            Serial.println(tv_set.tv_sec);
+        }
     }
 
     void syncFromNTP()
@@ -161,7 +168,8 @@ namespace RealTime
         if (!getLocalTime(&timeinfo))
         {
             Serial.println("getMinute() Failed to obtain time");
-            abort();
+            //abort();
+            return 0;
         }
 
         minute = timeinfo.tm_min;
@@ -177,7 +185,8 @@ namespace RealTime
         if (!getLocalTime(&timeinfo))
         {
             Serial.println("getSecond() Failed to obtain time");
-            abort();
+            //abort();
+            return 0;
         }
 
         second = timeinfo.tm_sec;

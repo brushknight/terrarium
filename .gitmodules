@@ -1,0 +1,6 @@
+[submodule "terrarium-firmware"]
+	path = terrarium-firmware
+	url = https://github.com/brushknight/terrarium-firmware
+[submodule "terrarium-hardware"]
+	path = terrarium-hardware
+	url = https://github.com/brushknight/terrarium-hardware
